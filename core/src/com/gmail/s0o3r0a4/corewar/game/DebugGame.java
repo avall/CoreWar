@@ -1,43 +1,51 @@
-package com.gmail.s0o3r0a4.corewar;
+package com.gmail.s0o3r0a4.corewar.game;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import static com.gmail.s0o3r0a4.corewar.Instruction.ADDR_MODE.DIR;
 import static com.gmail.s0o3r0a4.corewar.Instruction.ADDR_MODE.IMM;
+import static com.gmail.s0o3r0a4.corewar.Instruction.MODIFIER.F;
+import static com.gmail.s0o3r0a4.corewar.Instruction.MODIFIER.I;
 import static com.gmail.s0o3r0a4.corewar.Instruction.OP_CODE.DAT;
 import static com.gmail.s0o3r0a4.corewar.Instruction.OP_CODE.MOV;
 import com.badlogic.gdx.Gdx;
+import com.gmail.s0o3r0a4.corewar.Instruction;
+import com.gmail.s0o3r0a4.corewar.Maths;
+import com.gmail.s0o3r0a4.corewar.Process;
+import com.gmail.s0o3r0a4.corewar.Warrior;
 
-public class Game
+public class DebugGame extends Game
 {
-    private int coreSize;
-    private Instruction core[];
-    private ArrayList<Warrior> warriors = new ArrayList<Warrior>();
-    private ArrayList<Instruction> warriorsCode[];
+//    private int coreSize;
+//    private Instruction core[];
+//    private ArrayList<Warrior> warriors = new ArrayList<Warrior>();
+//    private ArrayList<Instruction> warriorsCode[];
+//
+//    private Process currentProcess;
+//
+//    private int warriorID;
+//    private int maxWarrior;
 
-    Process currentProcess;
+    private static final Instruction DAT00 = new Instruction(DAT, F, IMM, 0, IMM, 0);
 
-    private int warriorID;
-    private int maxWarrior;
-
-    public static final Instruction DAT00 = new Instruction(DAT, IMM, 0, IMM, 0);
-
-    public Game(int playerNumber, int coreSize)
+    public DebugGame(int playerNumber, int coreSize)
     {
-        this.coreSize = coreSize;
-        this.core = new Instruction[coreSize];
-        warriorsCode = new ArrayList[playerNumber];
+        super(playerNumber, coreSize);
+//        this.coreSize = coreSize;
+//        this.core = new Instruction[coreSize];
+//        this.warriorsCode = new ArrayList[playerNumber];
+        this.currentProcess = new Process(0, coreSize); // TODO: Add new constructor
 
-        currentProcess = new Process(0, coreSize); // TODO: Add new constructor
-        warriors = new ArrayList<Warrior>();
+        this.warriors = new ArrayList<Warrior>();
     }
 
     public void initCore()
     {
-        core[0] = new Instruction(MOV, DIR, 0, DIR, 1);
+        core[0] = new Instruction(MOV, I, DIR, 0, DIR, 1);
         for(int i = 1; i < coreSize; i++)
         {
             core[i] = DAT00;
@@ -73,6 +81,7 @@ public class Game
             Instruction currentInstruction = core[currentAddress];
 
             Instruction.OP_CODE opCode = currentInstruction.getOpCode();
+            Instruction.MODIFIER modifier = currentInstruction.getModifier();
             Instruction.ADDR_MODE modeA = currentInstruction.getModeA();
             int fieldA = currentInstruction.getFieldA();
             Instruction.ADDR_MODE modeB = currentInstruction.getModeB();
@@ -83,11 +92,10 @@ public class Game
             int immediateA = 0;
             int immediateB = 0;
 
-
             switch (modeA)
             {
                 case IMM:
-                    immediateA = fieldA;
+                    addressB = 0;
                     break;
 
                 case DIR:
@@ -99,10 +107,13 @@ public class Game
                     break;
             }
 
+            // Get immediate by address
+            immediateA = core[currentProcess.getAddr(addressA)].getFieldA();
+
             switch (modeB)
             {
                 case IMM:
-                    immediateB = fieldB;
+                    addressB = 0;
                     break;
 
                 case DIR:
@@ -112,15 +123,48 @@ public class Game
                 case IND:
                     addressB = core[Maths.mod(fieldB + currentAddress, coreSize)].getFieldB() + fieldB;
                     break;
-
-                default:
-//                System.out.println("error");
             }
+
+            // Get immediate by address
+            immediateB = core[currentProcess.getAddr(addressA)].getFieldB();
 
             switch (opCode)
             {
                 case MOV:
-                    core[currentProcess.getAddr(addressB)] = core[currentProcess.getAddr(addressA)];
+                    int destination = currentProcess.getAddr(addressB); // TODO: move up for other cases?
+                    switch (modifier)
+                    {
+                        case A:
+                            // SourceA => DestinationA
+                            core[destination].setA(immediateA);
+                            break;
+                        case B:
+                            // SourceB => DestinationB
+                            core[destination].setB(immediateB);
+                            break;
+                        case AB:
+                            // SourceA => DestinationB
+                            core[destination].setB(immediateA);
+                            break;
+                        case BA:
+                            // SourceB => DestinationA
+                            core[destination].setA(immediateB);
+                            break;
+                        case F:
+                            // SourceA=>DestinationA, SourceB=>DestinationB
+                            core[destination].setA(immediateA);
+                            core[destination].setB(immediateB);
+                            break;
+                        case X:
+                            // SourceA=>DestinationB, SourceB=>DestinationA
+                            core[destination].setB(immediateA);
+                            core[destination].setA(immediateB);
+                            break;
+                        case I:
+                            // Source => Destination
+                            core[destination] = core[currentProcess.getAddr(addressA)];
+                            break;
+                    }
                     break;
 
                 case DAT:

@@ -5,11 +5,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.gmail.s0o3r0a4.corewar.game.DebugGame;
 
 public class GameActivity extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
-    Game game = new Game(2, 8000);
+    DebugGame game = new DebugGame(2, 8000);
 
     @Override
 	public void create () {
