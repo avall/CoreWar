@@ -1,13 +1,6 @@
 package com.gmail.s0o3r0a4.corewar;
 
-import org.omg.CORBA.BAD_CONTEXT;
-
 import java.util.ArrayList;
-
-import sun.text.normalizer.NormalizerBase;
-
-import static com.gmail.s0o3r0a4.corewar.Instruction.ADDR_MODE.IMM;
-import static com.gmail.s0o3r0a4.corewar.Instruction.OP_CODE.DAT;
 
 public class Instruction
 {
@@ -86,13 +79,15 @@ public class Instruction
 
     // Setter
 
-    public void setA(int fieldA)
+    public void setA(ADDR_MODE modeA, int fieldA)
     {
+        this.modeA = modeA;
         this.fieldA = fieldA;
     }
 
-    public void setB(int fieldB)
+    public void setB(ADDR_MODE modeB, int fieldB)
     {
+        this.modeB = modeB;
         this.fieldB = fieldB;
     }
 }

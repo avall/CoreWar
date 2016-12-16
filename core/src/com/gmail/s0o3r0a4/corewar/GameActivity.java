@@ -11,7 +11,7 @@ import com.gmail.s0o3r0a4.corewar.game.DebugGame;
 public class GameActivity extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
-    DebugGame game = new DebugGame(2, 8000);
+    DebugGame game = new DebugGame(16);
 
     @Override
 	public void create () {
