@@ -1,4 +1,6 @@
-package com.gmail.s0o3r0a4.corewar;
+package com.gmail.s0o3r0a4.corewar.core;
+
+import com.gmail.s0o3r0a4.corewar.maths.Maths;
 
 public class Process
 {

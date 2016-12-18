@@ -1,13 +1,13 @@
 package com.gmail.s0o3r0a4.corewar.game;
 
-import com.gmail.s0o3r0a4.corewar.Instruction;
-import com.gmail.s0o3r0a4.corewar.Maths;
-import com.gmail.s0o3r0a4.corewar.Process;
-import com.gmail.s0o3r0a4.corewar.Warrior;
+import com.gmail.s0o3r0a4.corewar.core.Instruction;
+import com.gmail.s0o3r0a4.corewar.maths.Maths;
+import com.gmail.s0o3r0a4.corewar.core.Process;
+import com.gmail.s0o3r0a4.corewar.core.Warrior;
 
 import java.util.ArrayList;
 
-public abstract class Game
+public abstract class CoreWar
 {
     protected int coreSize;
     protected Instruction core[];
@@ -19,7 +19,7 @@ public abstract class Game
     protected int warriorID;
     protected int maxWarrior;
 
-    protected Game(/*int playerNumber, */int coreSize)
+    protected CoreWar(/*int playerNumber, */int coreSize)
     {
         this.coreSize = coreSize;
         this.core = new Instruction[coreSize];
@@ -33,6 +33,11 @@ public abstract class Game
 
     }
 
+    protected Instruction getInstruction(int address)
+    {
+        address = Maths.mod(address, coreSize);
+        return core[address];
+    }
 
     protected void cycle()
     {
