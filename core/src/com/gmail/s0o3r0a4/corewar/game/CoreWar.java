@@ -7,6 +7,8 @@ import com.gmail.s0o3r0a4.corewar.core.Warrior;
 
 import java.util.ArrayList;
 
+import static com.badlogic.gdx.Input.Keys.J;
+
 public abstract class CoreWar
 {
     protected int coreSize;
@@ -71,7 +73,7 @@ public abstract class CoreWar
             switch (modeA)
             {
                 case IMM:
-                    addressB = 0;
+                    addressA = 0;
                     break;
 
                 case DIR:
@@ -143,6 +145,7 @@ public abstract class CoreWar
                             break;
                     }
                     break;
+
                 case ADD:
                     switch (modifier)
                     {
@@ -174,6 +177,7 @@ public abstract class CoreWar
                             core[destination].setA(Maths.mod(immediateB + core[destination].getFieldA(), coreSize));
                             break;
                     }
+                    break;
 
                 case SUB:
                     switch (modifier)
@@ -206,6 +210,7 @@ public abstract class CoreWar
                             core[destination].setA(Maths.mod(core[destination].getFieldA() - immediateB, coreSize));
                             break;
                     }
+                    break;
 
                 case MUL:
                     switch (modifier)
@@ -238,6 +243,7 @@ public abstract class CoreWar
                             core[destination].setA(Maths.mod(immediateB * core[destination].getFieldA(), coreSize));
                             break;
                     }
+                    break;
 
                 case DIV:
                     switch (modifier)
@@ -284,6 +290,7 @@ public abstract class CoreWar
                             core[destination].setA(core[destination].getFieldA() / immediateB);
                             break;
                     }
+                    break;
 
                 case MOD:
                     switch (modifier)
@@ -330,11 +337,50 @@ public abstract class CoreWar
                             core[destination].setA(Maths.mod(core[destination].getFieldA(), immediateB));
                             break;
                     }
+                    break;
+
                 case JMP:
                     switch (modifier)
                     {
                         case A:
+                        case B:
+                        case AB:
+                        case BA:
+                        case F:
+                        case X:
+                        case I:
+                            currentProcess.setAddr(immediateA - 1);
+                            break;
                     }
+                    break;
+
+                case JMZ:
+                    switch (modifier)
+                    {
+                        case A:
+                        case BA:
+                            if (core[destination].getFieldA() == 0)
+                            {
+                                currentProcess.setAddr(immediateA - 1);
+                            }
+                            break;
+                        case B:
+                        case AB:
+                            if (core[destination].getFieldB() == 0)
+                            {
+                                currentProcess.setAddr(immediateA - 1);
+                            }
+                            break;
+                        case F:
+                        case X:
+                        case I:
+                            if (core[destination].getFieldA() == 0 && core[destination].getFieldB() == 0)
+                            {
+                                currentProcess.setAddr(immediateA - 1);
+                            }
+                            break;
+                    }
+                    break;
 
                 case DAT:
                 default:
