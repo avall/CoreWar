@@ -22,7 +22,8 @@ public class CoreWar extends Game
 	public void create () {
 		batch = new SpriteBatch();
 //		img = new Texture("badlogic.jpg");
-        font = new BitmapFont();
+        font = new BitmapFont(true);
+		font.getData().setScale(2);
 		this.setScreen(new GameScreen(coreWarDebug, this));
 	}
 

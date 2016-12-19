@@ -4,11 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.gmail.s0o3r0a4.corewar.CoreWar;
@@ -21,23 +24,24 @@ public class GameScreen implements Screen, InputProcessor
     private CoreWarDebug coreWarGame;
     private CoreWar coreWar;
 
-    private final int screenWidth;
-    private final int screenHeight;
+    private final float screenWidth;
+    private final float screenHeight;
 
-    private final int coreOffsetX = 10;
-    private final int coreOffsetY = 20;
-    private final int coreColGap = 1;
-    private final int coreRowGap = 1;
+    private final float coreOffsetX = 100;
+    private final float coreOffsetX2 = 100;
+    private final float coreOffsetY = 100;
+    private final float coreOffsetY2 = 500;
+    private final float coreColGap = 1;
+    private final float coreRowGap = 1;
 
-    private final int blocksCol = 64;
-    private final int blocksRow = 125;
+    private final float blocksCol = 64;
+    private final float blocksRow = 125;
 
     private OrthographicCamera camera;
 
     private Array<Rectangle> blocks;
-    private ShapeRenderer shapeRenderer;
 
-    private long lastCycleTime;
+    private Texture blockImg;
 
     public GameScreen(CoreWarDebug coreWarGame, CoreWar coreWar)
     {
@@ -46,6 +50,10 @@ public class GameScreen implements Screen, InputProcessor
 
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
+
+        Gdx.app.setLogLevel(Gdx.app.LOG_DEBUG);
+
+        Gdx.app.debug("Screen size", "w: " + Float.toString(screenWidth) + " h: " + Float.toString(screenHeight));
 
         // Load sound effect, music, and images
 
@@ -57,11 +65,13 @@ public class GameScreen implements Screen, InputProcessor
 
         blocks = new Array<Rectangle>();
 
-        int blockWidth = (screenWidth - (coreOffsetX * 2 + coreColGap * (blocksCol - 1))) / blocksCol;
-        int blockHeight = (screenHeight - (coreOffsetY * 2 + coreRowGap * (blocksRow - 1))) / blocksRow;
+        float blockWidth = (screenWidth - (coreOffsetX + coreOffsetX2 + coreColGap * (blocksCol - 1))) / blocksCol;
+        float blockHeight = (screenHeight - (coreOffsetY + coreOffsetY2 + coreRowGap * (blocksRow - 1))) / blocksRow;
 
-        int blockX;
-        int blockY;
+        Gdx.app.debug("Block size", "w: " + Float.toString(blockWidth) + " h: " + Float.toString(blockHeight));
+
+        float blockX;
+        float blockY;
 
         for (int i = 0; i < 125; i++)
         {
@@ -82,7 +92,8 @@ public class GameScreen implements Screen, InputProcessor
             }
         }
 
-        shapeRenderer = new ShapeRenderer();
+        blockImg = new Texture("block.png");
+//        shapeRenderer = new ShapeRenderer();
 
         Gdx.input.setInputProcessor(this);
     }
@@ -109,31 +120,54 @@ public class GameScreen implements Screen, InputProcessor
         // tell the SpriteBatch to render in the
         // coordinate system specified by the camera.
         coreWar.batch.setProjectionMatrix(camera.combined);
-        shapeRenderer.setProjectionMatrix(camera.combined);
+//        shapeRenderer.setProjectionMatrix(camera.combined);
 
         // begin a new batch and draw the bucket and
         // all drops
         coreWar.batch.begin();
-        coreWar.font.draw(coreWar.batch, "Core War", 0, 0);
-        coreWar.batch.end();
+
+
+//        coreWar.batch.setTransformMatrix(camera.combined);
 
         for (int i = 0; i < coreWarGame.getCoreSize(); i++)
         {
-
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            switch(coreWarGame.getType(i))
-            {
-                case MOV:
-                    shapeRenderer.setColor(1f, 1f, 0f, 1);
-                    break;
-                case DAT:
-                    shapeRenderer.setColor(0.5f, 0.5f, 0.5f, 1);
-                    break;
-            }
             Rectangle block = blocks.get(i);
-            shapeRenderer.rect(block.x, block.y, block.width, block.height);
-            shapeRenderer.end();
+            switch(coreWarGame.getType(i))
+                {
+                    case MOV:
+                        coreWar.batch.setColor(Color.YELLOW);
+                        break;
+                    case DAT:
+                        coreWar.batch.setColor(Color.WHITE);
+                        break;
+                }
+            coreWar.batch.draw(blockImg, block.x, block.y, block.width, block.height);
+//            coreWar.batch.setColor(Color.WHITE);
         }
+
+        coreWar.font.setColor(Color.WHITE);
+        coreWar.font.draw(coreWar.batch, "Core War", 0, coreWar.font.getXHeight());
+
+        coreWar.batch.end();
+
+
+//        for (int i = 0; i < 64/*coreWarGame.getCoreSize()*/; i++)
+//            {
+//
+//                shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+//                switch(coreWarGame.getType(i))
+//                {
+//                    case MOV:
+//                        shapeRenderer.setColor(1f, 1f, 0f, 1);
+//                        break;
+//                    case DAT:
+//                        shapeRenderer.setColor(0.5f, 0.5f, 0.5f, 1);
+//                        break;
+//                }
+//                Rectangle block = blocks.get(i);
+//                shapeRenderer.rect(block.x, block.y, block.width, block.height);
+//                shapeRenderer.end();
+//        }
 
         // process user input
 //        if (Gdx.input.isTouched()) {
@@ -154,14 +188,19 @@ public class GameScreen implements Screen, InputProcessor
     @Override
     public void resize(int width, int height)
     {
-        camera = new OrthographicCamera(width, height);
-        camera.setToOrtho(true, width, height);
 
-        int blockWidth = (width - (coreOffsetX * 2 + coreColGap * (blocksCol - 1))) / blocksCol;
-        int blockHeight = (height - (coreOffsetY * 2 + coreRowGap * (blocksRow - 1))) / blocksRow;
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        int blockX;
-        int blockY;
+        camera.update();
+
+//        coreWar.batch.setProjectionMatrix(camera.combined);
+
+        float blockWidth = (width - (coreOffsetX + coreOffsetX2 + coreColGap * (blocksCol - 1))) / blocksCol;
+        float blockHeight = (height - (coreOffsetY + coreOffsetY2 + coreRowGap * (blocksRow - 1))) / blocksRow;
+
+        float blockX;
+        float blockY;
 
         for (int i = 0; i < 125; i++)
         {

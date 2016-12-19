@@ -14,7 +14,12 @@ public class Instruction
     public enum OP_CODE
     {
         DAT,
-        MOV;
+        MOV,
+        ADD, SUB, MUL, DIV, MOD,
+        JMP, JMZ, JMN, DJN,
+        SPL,
+        SEQ, SNE, CMP, SLT,
+        NOP;
     }
 
     public enum MODIFIER
