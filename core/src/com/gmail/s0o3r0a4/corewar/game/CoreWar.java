@@ -208,6 +208,70 @@ public abstract class CoreWar
                             break;
                     }
 
+                case MUL:
+                    switch (modifier)
+                    {
+                        case A:
+                            // SourceA * DestinationA => DestinationA
+                            core[destination].setA(Maths.mod(immediateA * core[destination].getFieldA(), coreSize));
+                            break;
+                        case B:
+                            // SourceB * DestinationB => DestinationB
+                            core[destination].setB(Maths.mod(immediateB * core[destination].getFieldB(), coreSize));
+                            break;
+                        case AB:
+                            // SourceA * DestinationB => DestinationB
+                            core[destination].setB(Maths.mod(immediateA * core[destination].getFieldB(), coreSize));
+                            break;
+                        case BA:
+                            // SourceB * DestinationA => DestinationA
+                            core[destination].setA(Maths.mod(immediateB * core[destination].getFieldA(), coreSize));
+                            break;
+                        case F:
+                            // SourceA * DestinationA => DestinationA, SourceB * DestinationB => DestinationB
+                            core[destination].setA(Maths.mod(immediateA * core[destination].getFieldA(), coreSize));
+                            core[destination].setB(Maths.mod(immediateB * core[destination].getFieldB(), coreSize));
+                        case I:
+                            break;
+                        case X:
+                            // SourceA * DestinationB => DestinationB, SourceB * DestinationA => DestinationA
+                            core[destination].setB(Maths.mod(immediateA * core[destination].getFieldB(), coreSize));
+                            core[destination].setA(Maths.mod(immediateB * core[destination].getFieldA(), coreSize));
+                            break;
+                    }
+
+                case DIV:
+                    switch (modifier)
+                    {
+                        case A:
+                            // DestinationA / SourceA => DestinationA
+                            core[destination].setA(core[destination].getFieldA() / immediateA);
+                            break;
+                        case B:
+                            // DestinationB / SourceB => DestinationB
+                            core[destination].setB(core[destination].getFieldB() / immediateB);
+                            break;
+                        case AB:
+                            // DestinationB / SourceA => DestinationB
+                            core[destination].setB(core[destination].getFieldB() / immediateA);
+                            break;
+                        case BA:
+                            // DestinationA / SourceB => DestinationA
+                            core[destination].setA(core[destination].getFieldA() / immediateB);
+                            break;
+                        case F:
+                            // DestinationA / SourceA => DestinationA, DestinationB / SourceB => DestinationB
+                            core[destination].setA(core[destination].getFieldA() / immediateA);
+                            core[destination].setB(core[destination].getFieldB() / immediateB);
+                        case I:
+                            break;
+                        case X:
+                            // DestinationB / SourceA => DestinationB, DestinationA / SourceB => DestinationA
+                            core[destination].setB(core[destination].getFieldB() / immediateA);
+                            core[destination].setA(core[destination].getFieldA() / immediateB);
+                            break;
+                    }
+
                 case DAT:
                 default:
                     currentWarrior.killProcess();
