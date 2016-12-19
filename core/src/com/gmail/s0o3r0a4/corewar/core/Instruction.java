@@ -1,5 +1,7 @@
 package com.gmail.s0o3r0a4.corewar.core;
 
+import com.gmail.s0o3r0a4.corewar.maths.Maths;
+
 import java.util.ArrayList;
 
 public class Instruction
@@ -90,9 +92,19 @@ public class Instruction
         this.fieldA = fieldA;
     }
 
+    public void setA(int fieldA)
+    {
+        this.fieldA = fieldA;
+    }
+
     public void setB(ADDR_MODE modeB, int fieldB)
     {
         this.modeB = modeB;
+        this.fieldB = fieldB;
+    }
+
+    public void setB(int fieldB)
+    {
         this.fieldB = fieldB;
     }
 }

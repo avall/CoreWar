@@ -105,37 +105,38 @@ public abstract class CoreWar
             // Get immediate by address
             immediateB = core[currentProcess.getAddr(addressA)].getFieldB();
 
+            int destination = currentProcess.getAddr(addressB); // TODO: move up for other cases?
+
             switch (opCode)
             {
                 case MOV:
-                    int destination = currentProcess.getAddr(addressB); // TODO: move up for other cases?
                     switch (modifier)
                     {
                         case A:
                             // SourceA => DestinationA
-                            core[destination].setA(modeA, immediateA);
+                            core[destination].setA(immediateA);
                             break;
                         case B:
                             // SourceB => DestinationB
-                            core[destination].setB(modeB, immediateB);
+                            core[destination].setB(immediateB);
                             break;
                         case AB:
                             // SourceA => DestinationB
-                            core[destination].setB(modeA, immediateA);
+                            core[destination].setB(immediateA);
                             break;
                         case BA:
                             // SourceB => DestinationA
-                            core[destination].setA(modeB, immediateB);
+                            core[destination].setA(immediateB);
                             break;
                         case F:
                             // SourceA=>DestinationA, SourceB=>DestinationB
-                            core[destination].setA(modeA, immediateA);
-                            core[destination].setB(modeB, immediateB);
+                            core[destination].setA(immediateA);
+                            core[destination].setB(immediateB);
                             break;
                         case X:
                             // SourceA=>DestinationB, SourceB=>DestinationA
-                            core[destination].setB(modeA, immediateA);
-                            core[destination].setA(modeB, immediateB);
+                            core[destination].setB(immediateA);
+                            core[destination].setA(immediateB);
                             break;
                         case I:
                             // Source => Destination
@@ -143,6 +144,69 @@ public abstract class CoreWar
                             break;
                     }
                     break;
+                case ADD:
+                    switch (modifier)
+                    {
+                        case A:
+                            // SourceA + DestinationA => DestinationA
+                            core[destination].setA(Maths.mod(immediateA + core[destination].getFieldA(), coreSize));
+                            break;
+                        case B:
+                            // SourceB + DestinationB => DestinationB
+                            core[destination].setB(Maths.mod(immediateB + core[destination].getFieldB(), coreSize));
+                            break;
+                        case AB:
+                            // SourceA + DestinationB => DestinationB
+                            core[destination].setB(Maths.mod(immediateA + core[destination].getFieldB(), coreSize));
+                            break;
+                        case BA:
+                            // SourceB + DestinationA => DestinationA
+                            core[destination].setA(Maths.mod(immediateB + core[destination].getFieldA(), coreSize));
+                            break;
+                        case F:
+                            // SourceA + DestinationA => DestinationA, SourceB + DestinationB => DestinationB
+                            core[destination].setA(Maths.mod(immediateA + core[destination].getFieldA(), coreSize));
+                            core[destination].setB(Maths.mod(immediateB + core[destination].getFieldB(), coreSize));
+                        case I:
+                            break;
+                        case X:
+                            // SourceA + DestinationB => DestinationB, SourceB + DestinationA => DestinationA
+                            core[destination].setB(Maths.mod(immediateA + core[destination].getFieldB(), coreSize));
+                            core[destination].setA(Maths.mod(immediateB + core[destination].getFieldA(), coreSize));
+                            break;
+                    }
+
+                case SUB:
+                    switch (modifier)
+                    {
+                        case A:
+                            // DestinationA - SourceA => DestinationA
+                            core[destination].setA(Maths.mod(core[destination].getFieldA() - immediateA, coreSize));
+                            break;
+                        case B:
+                            // DestinationB - SourceB => DestinationB
+                            core[destination].setB(Maths.mod(core[destination].getFieldB() - immediateB, coreSize));
+                            break;
+                        case AB:
+                            // DestinationB - SourceA => DestinationB
+                            core[destination].setB(Maths.mod(core[destination].getFieldB() - immediateA, coreSize));
+                            break;
+                        case BA:
+                            // DestinationA - SourceB => DestinationA
+                            core[destination].setA(Maths.mod(core[destination].getFieldA() - immediateB, coreSize));
+                            break;
+                        case F:
+                            // DestinationA - SourceA => DestinationA, DestinationB - SourceB => DestinationB
+                            core[destination].setA(Maths.mod(core[destination].getFieldA() - immediateA, coreSize));
+                            core[destination].setB(Maths.mod(core[destination].getFieldB() - immediateB, coreSize));
+                        case I:
+                            break;
+                        case X:
+                            // DestinationB - SourceA => DestinationB, DestinationA - SourceB => DestinationA
+                            core[destination].setB(Maths.mod(core[destination].getFieldB() - immediateA, coreSize));
+                            core[destination].setA(Maths.mod(core[destination].getFieldA() - immediateB, coreSize));
+                            break;
+                    }
 
                 case DAT:
                 default:
