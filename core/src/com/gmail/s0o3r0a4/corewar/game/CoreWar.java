@@ -285,6 +285,57 @@ public abstract class CoreWar
                             break;
                     }
 
+                case MOD:
+                    switch (modifier)
+                    {
+                        case A:
+                            checkDividedByZero(immediateA);
+
+                            // DestinationA % SourceA => DestinationA
+                            core[destination].setA(Maths.mod(core[destination].getFieldA(), immediateA));
+                            break;
+                        case B:
+                            checkDividedByZero(immediateB);
+
+                            // DestinationB / SourceB => DestinationB
+                            core[destination].setB(Maths.mod(core[destination].getFieldB(), immediateB));
+                            break;
+                        case AB:
+                            checkDividedByZero(immediateA);
+
+                            // DestinationB / SourceA => DestinationB
+                            core[destination].setB(Maths.mod(core[destination].getFieldB(), immediateA));
+                            break;
+                        case BA:
+                            checkDividedByZero(immediateB);
+
+                            // DestinationA / SourceB => DestinationA
+                            core[destination].setA(Maths.mod(core[destination].getFieldA(), immediateB));
+                            break;
+                        case F:
+                            checkDividedByZero(immediateA);
+                            checkDividedByZero(immediateB);
+
+                            // DestinationA / SourceA => DestinationA, DestinationB / SourceB => DestinationB
+                            core[destination].setA(Maths.mod(core[destination].getFieldA(), immediateA));
+                            core[destination].setB(Maths.mod(core[destination].getFieldB(), immediateB));
+                        case I:
+                            break;
+                        case X:
+                            checkDividedByZero(immediateA);
+                            checkDividedByZero(immediateB);
+
+                            // DestinationB / SourceA => DestinationB, DestinationA / SourceB => DestinationA
+                            core[destination].setB(Maths.mod(core[destination].getFieldB(), immediateA));
+                            core[destination].setA(Maths.mod(core[destination].getFieldA(), immediateB));
+                            break;
+                    }
+                case JMP:
+                    switch (modifier)
+                    {
+                        case A:
+                    }
+
                 case DAT:
                 default:
                     killProcess();
