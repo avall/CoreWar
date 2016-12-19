@@ -27,10 +27,10 @@ public class GameScreen implements Screen, InputProcessor
     private final float screenWidth;
     private final float screenHeight;
 
-    private final float coreOffsetX = 100;
-    private final float coreOffsetX2 = 100;
-    private final float coreOffsetY = 100;
-    private final float coreOffsetY2 = 500;
+    private final float coreOffsetX = 0;
+    private final float coreOffsetX2 = 0;
+    private final float coreOffsetY = 0;
+    private final float coreOffsetY2 = 0;
     private final float coreColGap = 1;
     private final float coreRowGap = 1;
 
@@ -66,7 +66,16 @@ public class GameScreen implements Screen, InputProcessor
         blocks = new Array<Rectangle>();
 
         float blockWidth = (screenWidth - (coreOffsetX + coreOffsetX2 + coreColGap * (blocksCol - 1))) / blocksCol;
+        if (blockWidth < 1f)
+        {
+            blockWidth = 1f;
+        }
+
         float blockHeight = (screenHeight - (coreOffsetY + coreOffsetY2 + coreRowGap * (blocksRow - 1))) / blocksRow;
+        if (blockHeight < 1f)
+        {
+            blockHeight = 1f;
+        }
 
         Gdx.app.debug("Block size", "w: " + Float.toString(blockWidth) + " h: " + Float.toString(blockHeight));
 
@@ -188,16 +197,24 @@ public class GameScreen implements Screen, InputProcessor
     @Override
     public void resize(int width, int height)
     {
-
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+//        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(true, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        camera.update();
+//        camera.update();
 
 //        coreWar.batch.setProjectionMatrix(camera.combined);
 
         float blockWidth = (width - (coreOffsetX + coreOffsetX2 + coreColGap * (blocksCol - 1))) / blocksCol;
+        if (blockWidth < 1f)
+        {
+            blockWidth = 1f;
+        }
+
         float blockHeight = (height - (coreOffsetY + coreOffsetY2 + coreRowGap * (blocksRow - 1))) / blocksRow;
+        if (blockHeight < 1f)
+        {
+            blockHeight = 1f;
+        }
 
         float blockX;
         float blockY;
@@ -220,6 +237,9 @@ public class GameScreen implements Screen, InputProcessor
                 blocks.set(j+i*64 , rectangle);
             }
         }
+
+        Gdx.app.debug("Resized Screen size", "w: " + Float.toString(Gdx.graphics.getWidth()) + " h: " + Float.toString(Gdx.graphics.getHeight()));
+        Gdx.app.debug("Resized Block size", "w: " + Float.toString(blockWidth) + " h: " + Float.toString(blockHeight));
     }
 
     @Override

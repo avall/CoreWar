@@ -14,7 +14,9 @@ public abstract class CoreWar
     protected ArrayList<Warrior> warriors = new ArrayList<Warrior>();
 //    protected ArrayList<Instruction> warriorsCode[];
 
+    protected int currentAddress;
     protected Process currentProcess;
+    protected Warrior currentWarrior;
 
     protected int warriorID;
     protected int maxWarrior;
@@ -41,9 +43,6 @@ public abstract class CoreWar
 
     protected void cycle()
     {
-        Warrior currentWarrior;
-        int currentAddress;
-
         if (maxWarrior > 0)
         {
 
@@ -244,28 +243,42 @@ public abstract class CoreWar
                     switch (modifier)
                     {
                         case A:
+                            checkDividedByZero(immediateA);
+
                             // DestinationA / SourceA => DestinationA
                             core[destination].setA(core[destination].getFieldA() / immediateA);
                             break;
                         case B:
+                            checkDividedByZero(immediateB);
+
                             // DestinationB / SourceB => DestinationB
                             core[destination].setB(core[destination].getFieldB() / immediateB);
                             break;
                         case AB:
+                            checkDividedByZero(immediateA);
+
                             // DestinationB / SourceA => DestinationB
                             core[destination].setB(core[destination].getFieldB() / immediateA);
                             break;
                         case BA:
+                            checkDividedByZero(immediateB);
+
                             // DestinationA / SourceB => DestinationA
                             core[destination].setA(core[destination].getFieldA() / immediateB);
                             break;
                         case F:
+                            checkDividedByZero(immediateA);
+                            checkDividedByZero(immediateB);
+
                             // DestinationA / SourceA => DestinationA, DestinationB / SourceB => DestinationB
                             core[destination].setA(core[destination].getFieldA() / immediateA);
                             core[destination].setB(core[destination].getFieldB() / immediateB);
                         case I:
                             break;
                         case X:
+                            checkDividedByZero(immediateA);
+                            checkDividedByZero(immediateB);
+
                             // DestinationB / SourceA => DestinationB, DestinationA / SourceB => DestinationA
                             core[destination].setB(core[destination].getFieldB() / immediateA);
                             core[destination].setA(core[destination].getFieldA() / immediateB);
@@ -274,11 +287,7 @@ public abstract class CoreWar
 
                 case DAT:
                 default:
-                    currentWarrior.killProcess();
-                    if (currentWarrior.getMaxProcesses() == 0)
-                    {
-                        removeWarrior();
-                    }
+                    killProcess();
             }
         }
     }
@@ -288,6 +297,23 @@ public abstract class CoreWar
         // TODO: Record lost warrior
         maxWarrior--;
         warriors.remove(warriorID);
+    }
+
+    protected void killProcess()
+    {
+        currentWarrior.killProcess();
+        if (currentWarrior.getMaxProcesses() == 0)
+        {
+            removeWarrior();
+        }
+    }
+
+    protected void checkDividedByZero(int dividend)
+    {
+        if (dividend == 0)
+        {
+            killProcess();
+        }
     }
 
     // README: Should only be called once in one cycle
