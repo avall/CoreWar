@@ -142,14 +142,39 @@ public class GameScreen implements Screen, InputProcessor
         {
             Rectangle block = blocks.get(i);
             switch(coreWarGame.getType(i))
-                {
+            {
                     case MOV:
                         coreWar.batch.setColor(Color.YELLOW);
                         break;
-                    case DAT:
-                        coreWar.batch.setColor(Color.WHITE);
+                    case ADD:
+                        coreWar.batch.setColor(Color.RED);
                         break;
-                }
+                    case SUB:
+                        coreWar.batch.setColor(Color.BLUE);
+                        break;
+                    case MUL:
+                        coreWar.batch.setColor(Color.ORANGE);
+                        break;
+                    case DIV:
+                        coreWar.batch.setColor(Color.GREEN);
+                        break;
+                    case MOD:
+                        coreWar.batch.setColor(Color.CYAN);
+                        break;
+                    case JMP:
+                        coreWar.batch.setColor(Color.PINK);
+                        break;
+                    case JMZ:
+                        coreWar.batch.setColor(Color.PURPLE);
+                        break;
+                    case DAT:
+                        coreWar.batch.setColor(Color.GRAY);
+                        if (coreWarGame.isUnempty(i))
+                        {
+                            coreWar.batch.setColor(Color.BLACK);
+                        }
+                        break;
+            }
             coreWar.batch.draw(blockImg, block.x, block.y, block.width, block.height);
 //            coreWar.batch.setColor(Color.WHITE);
         }

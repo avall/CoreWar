@@ -11,7 +11,6 @@ public class Process
     {
         this.maxAddr = maxAddr;
         this.address = Maths.mod(address, maxAddr);
-        setAddr(-1);
     }
 
     public void setAddr(int offset)

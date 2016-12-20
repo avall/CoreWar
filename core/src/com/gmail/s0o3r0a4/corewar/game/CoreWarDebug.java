@@ -3,10 +3,15 @@ package com.gmail.s0o3r0a4.corewar.game;
 import java.util.ArrayList;
 
 import static com.gmail.s0o3r0a4.corewar.core.Instruction.ADDR_MODE.DIR;
+import static com.gmail.s0o3r0a4.corewar.core.Instruction.ADDR_MODE.IMM;
+import static com.gmail.s0o3r0a4.corewar.core.Instruction.ADDR_MODE.IND;
 import static com.gmail.s0o3r0a4.corewar.core.Instruction.MODIFIER.F;
+import static com.gmail.s0o3r0a4.corewar.core.Instruction.MODIFIER.AB;
 import static com.gmail.s0o3r0a4.corewar.core.Instruction.MODIFIER.I;
 import static com.gmail.s0o3r0a4.corewar.core.Instruction.OP_CODE.DAT;
 import static com.gmail.s0o3r0a4.corewar.core.Instruction.OP_CODE.MOV;
+import static com.gmail.s0o3r0a4.corewar.core.Instruction.OP_CODE.ADD;
+import static com.gmail.s0o3r0a4.corewar.core.Instruction.OP_CODE.JMP;
 
 import com.badlogic.gdx.Gdx;
 import com.gmail.s0o3r0a4.corewar.core.Instruction;
@@ -48,14 +53,20 @@ public class CoreWarDebug extends CoreWar
             core[i] = DAT00;
         }
 
-        core[0] = new Instruction(MOV, I, DIR, 0, DIR, 1);
+        core[0] = new Instruction(ADD, AB, IMM, 4, DIR, 3);
+        core[1] = new Instruction(MOV, I, DIR, 2, IND, 2);
+        core[2] = new Instruction(JMP, AB, DIR, -2, DIR, 0);
+        core[3] = new Instruction(DAT, F, IMM, 0, IMM, 0);
+
+        core[81] = new Instruction(MOV, I, DIR, 0, DIR, 1);
 
         warriorID = 0;
-        maxWarrior = 1;
+        maxWarrior = 2;
 
         Warrior warrior = new Warrior(0, coreSize);
+        Warrior warrior2 = new Warrior(81-1, coreSize);
         warriors.add(warrior);
-
+        warriors.add(warrior2);
         currentProcess = warrior.getProcess();
         currentProcess.setAddr(0);
     }
@@ -68,6 +79,18 @@ public class CoreWarDebug extends CoreWar
     public int getCoreSize()
     {
         return coreSize;
+    }
+
+    public boolean isUnempty(int i)
+    {
+        if (core[i].getFieldA() != 0 || core[i].getFieldB() != 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     public CoreWarDebug(int coreSize)

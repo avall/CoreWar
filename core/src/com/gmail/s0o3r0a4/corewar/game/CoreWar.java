@@ -1,5 +1,6 @@
 package com.gmail.s0o3r0a4.corewar.game;
 
+import com.badlogic.gdx.Gdx;
 import com.gmail.s0o3r0a4.corewar.core.Instruction;
 import com.gmail.s0o3r0a4.corewar.maths.Maths;
 import com.gmail.s0o3r0a4.corewar.core.Process;
@@ -47,15 +48,6 @@ public abstract class CoreWar
     {
         if (maxWarrior > 0)
         {
-
-            // README: This warrior is the next one
-            // README: Side effect: ID++
-            currentWarrior = nextWarrior();
-
-            currentProcess = currentWarrior.nextProcess(); // README: This process is from the next warrior
-
-            currentAddress = currentProcess.nextAddr();
-
             Instruction currentInstruction = core[currentAddress];
 
             Instruction.OP_CODE opCode = currentInstruction.getOpCode();
@@ -69,6 +61,9 @@ public abstract class CoreWar
             int addressB = 0;
             int immediateA = 0;
             int immediateB = 0;
+
+            Gdx.app.debug(opCode.toString(), modeA.toString() + Integer.toString(fieldA) + " " +
+                    modeB.toString() + Integer.toString(fieldB));
 
             switch (modeA)
             {
@@ -349,7 +344,7 @@ public abstract class CoreWar
                         case F:
                         case X:
                         case I:
-                            currentProcess.setAddr(immediateA - 1);
+                            currentProcess.setAddr(addressA - 1);
                             break;
                     }
                     break;
@@ -361,14 +356,14 @@ public abstract class CoreWar
                         case BA:
                             if (core[destination].getFieldA() == 0)
                             {
-                                currentProcess.setAddr(immediateA - 1);
+                                currentProcess.setAddr(addressA - 1);
                             }
                             break;
                         case B:
                         case AB:
                             if (core[destination].getFieldB() == 0)
                             {
-                                currentProcess.setAddr(immediateA - 1);
+                                currentProcess.setAddr(addressA - 1);
                             }
                             break;
                         case F:
@@ -376,15 +371,27 @@ public abstract class CoreWar
                         case I:
                             if (core[destination].getFieldA() == 0 && core[destination].getFieldB() == 0)
                             {
-                                currentProcess.setAddr(immediateA - 1);
+                                currentProcess.setAddr(addressA - 1);
                             }
                             break;
                     }
                     break;
 
+
+
                 case DAT:
                 default:
                     killProcess();
+            }
+
+            // README: This warrior is the next one
+            // README: Side effect: ID++
+            currentWarrior = nextWarrior();
+
+            if (currentWarrior != null)
+            {
+                currentProcess = currentWarrior.nextProcess(); // README: This process is from the next warrior
+                currentAddress = currentProcess.nextAddr();
             }
         }
     }
@@ -399,6 +406,8 @@ public abstract class CoreWar
     protected void killProcess()
     {
         currentWarrior.killProcess();
+        Gdx.app.debug("Kill current process", Integer.toString(currentAddress));
+
         if (currentWarrior.getMaxProcesses() == 0)
         {
             removeWarrior();
@@ -416,8 +425,15 @@ public abstract class CoreWar
     // README: Should only be called once in one cycle
     private Warrior nextWarrior()
     {
-        warriorID = (++warriorID) % maxWarrior;
-        return warriors.get(warriorID);
+        if (maxWarrior != 0)
+        {
+            warriorID = (++warriorID) % maxWarrior;
+            return warriors.get(warriorID);
+        }
+        else
+        {
+            return null;
+        }
     }
 
 }

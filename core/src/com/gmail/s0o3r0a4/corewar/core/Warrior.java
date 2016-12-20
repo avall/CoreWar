@@ -11,8 +11,8 @@ public class Warrior
 
     public Warrior(int address, int maxAddr)
     {
-        this.processes = new ArrayList<com.gmail.s0o3r0a4.corewar.core.Process>();
-        this.processes.add(0, new com.gmail.s0o3r0a4.corewar.core.Process(address, maxAddr));
+        this.processes = new ArrayList<Process>();
+        this.processes.add(0, new Process(address, maxAddr));
         this.currentProcess = 0;
         this.maxProcesses = 1;
     }
