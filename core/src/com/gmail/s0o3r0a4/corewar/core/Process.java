@@ -26,8 +26,8 @@ public class Process
     // README: Should only be called once in one cycle
     public int nextAddr()
     {
-        return address = Maths.mod(++address, maxAddr);
-    } // TODO: Optimize
+        return address = ++address % maxAddr;
+    }
 
     public int getAddr()
     {
