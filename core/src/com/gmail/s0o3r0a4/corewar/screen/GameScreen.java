@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.gmail.s0o3r0a4.corewar.CoreWar;
+import com.gmail.s0o3r0a4.corewar.assets.Assets;
 import com.gmail.s0o3r0a4.corewar.game.CoreWarDebug;
 
 import static com.badlogic.gdx.Gdx.input;
@@ -43,10 +44,10 @@ public class GameScreen implements Screen, InputProcessor
 
     private Texture blockImg;
 
-    public GameScreen(CoreWarDebug coreWarGame, CoreWar coreWar)
+    public GameScreen(CoreWar game, Assets assets, CoreWarDebug coreWarGame)
     {
         this.coreWarGame = coreWarGame;
-        this.coreWar = coreWar;
+        this.coreWar = game;
 
         screenWidth = Gdx.graphics.getWidth();
         screenHeight = Gdx.graphics.getHeight();
@@ -101,7 +102,7 @@ public class GameScreen implements Screen, InputProcessor
             }
         }
 
-        blockImg = new Texture("block.png");
+        blockImg = assets.manager.get(assets.blockTexture);
 //        shapeRenderer = new ShapeRenderer();
 
         Gdx.input.setInputProcessor(this);
@@ -179,11 +180,16 @@ public class GameScreen implements Screen, InputProcessor
 //            coreWar.batch.setColor(Color.WHITE);
         }
 
-        coreWar.font.setColor(Color.WHITE);
-        coreWar.font.draw(coreWar.batch, "Core War", 0, coreWar.font.getXHeight());
+//        coreWar.font.setColor(Color.WHITE);
+//        coreWar.font.draw(coreWar.batch, "Core War", 0, coreWar.font.getXHeight());
 
         coreWar.batch.end();
 
+
+        for (int i = 0; i < (int)(0 * Gdx.graphics.getDeltaTime()); i++)
+        {
+            coreWarGame.cycle();
+        }
 
 //        for (int i = 0; i < 64/*coreWarGame.getCoreSize()*/; i++)
 //            {
@@ -326,7 +332,10 @@ public class GameScreen implements Screen, InputProcessor
         // ignore if its not left mouse button or first touch pointer
         if (button != Input.Buttons.LEFT || pointer > 0) return false;
 //        camera.unproject(tp.set(screenX, screenY, 0));
-        coreWarGame.cycle();
+//        for (int i = 0; i < (int)(100 * Gdx.graphics.getDeltaTime()); i++)
+//        {
+            coreWarGame.cycle();
+//        }
         return true;
     }
 

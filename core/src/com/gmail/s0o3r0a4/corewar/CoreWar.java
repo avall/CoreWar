@@ -7,29 +7,33 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.gmail.s0o3r0a4.corewar.assets.Assets;
 import com.gmail.s0o3r0a4.corewar.game.CoreWarDebug;
 import com.gmail.s0o3r0a4.corewar.screen.GameScreen;
+import com.gmail.s0o3r0a4.corewar.screen.MainMenuScreen;
+import com.gmail.s0o3r0a4.corewar.screen.SplashScreen;
 
 public class CoreWar extends Game
 {
 	public SpriteBatch batch;
-    public BitmapFont font;
+
+    public Assets assets;
 //	Texture img;
 
     CoreWarDebug coreWarDebug = new CoreWarDebug(8000);
 
     @Override
 	public void create () {
+        this.assets = new Assets();
+
 		batch = new SpriteBatch();
-//		img = new Texture("badlogic.jpg");
-        font = new BitmapFont(true);
-		font.getData().setScale(2);
-		this.setScreen(new GameScreen(coreWarDebug, this));
+		this.setScreen(new SplashScreen(this, assets));
 	}
 
 	@Override
 	public void render () {
         super.render();
+
 //		Gdx.gl.glClearColor(1, 0, 0, 1);
 //		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 //		batch.begin();
@@ -40,6 +44,7 @@ public class CoreWar extends Game
 	@Override
 	public void dispose () {
 		batch.dispose();
+        assets.dispose();
 //		img.dispose();
 	}
 }
