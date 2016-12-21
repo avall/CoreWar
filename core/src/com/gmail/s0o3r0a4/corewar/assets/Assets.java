@@ -12,7 +12,7 @@ public class Assets {
             new AssetDescriptor<Texture>("block.png", Texture.class);
 
     public static final AssetDescriptor<Skin> uiSkin =
-            new AssetDescriptor<Skin>("default-ui/uiskin.json", Skin.class);
+                new AssetDescriptor<Skin>("data/uiskin.json", Skin.class);
 
     public void load()
     {

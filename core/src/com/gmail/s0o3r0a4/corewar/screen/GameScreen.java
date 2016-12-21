@@ -102,7 +102,8 @@ public class GameScreen implements Screen, InputProcessor
             }
         }
 
-        blockImg = assets.manager.get(assets.blockTexture);
+        blockImg = assets.manager.get(Assets.blockTexture);
+//        blockImg = new Texture(Gdx.files.internal("block.png"));
 //        shapeRenderer = new ShapeRenderer();
 
         Gdx.input.setInputProcessor(this);
@@ -296,8 +297,6 @@ public class GameScreen implements Screen, InputProcessor
     {
 
     }
-
-    Vector3 tp = new Vector3();
 
     @Override
     public boolean keyDown(int keycode)

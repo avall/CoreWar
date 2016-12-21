@@ -3,11 +3,13 @@ package com.gmail.s0o3r0a4.corewar.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.gmail.s0o3r0a4.corewar.CoreWar;
 import com.gmail.s0o3r0a4.corewar.assets.Assets;
+import com.gmail.s0o3r0a4.corewar.game.CoreWarDebug;
 
 public class SplashScreen implements Screen
 {
@@ -34,7 +36,7 @@ public class SplashScreen implements Screen
 
         if (assets.manager.update())
         {
-            game.setScreen(new MainMenuScreen(assets));
+            game.setScreen(new GameScreen(game, assets, new CoreWarDebug(8000)));
         }
 
         stage.act(delta);
@@ -68,7 +70,7 @@ public class SplashScreen implements Screen
     @Override
     public void dispose()
     {
-
+        stage.dispose();
     }
 
 

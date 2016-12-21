@@ -17,7 +17,7 @@ public class CoreWar extends Game
 {
 	public SpriteBatch batch;
 
-    public Assets assets;
+    private Assets assets;
 //	Texture img;
 
     CoreWarDebug coreWarDebug = new CoreWarDebug(8000);
@@ -25,9 +25,10 @@ public class CoreWar extends Game
     @Override
 	public void create () {
         this.assets = new Assets();
+        assets.load();
 
 		batch = new SpriteBatch();
-		this.setScreen(new SplashScreen(this, assets));
+		this.setScreen(new SplashScreen(this, this.assets));
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class CoreWar extends Game
 	@Override
 	public void dispose () {
 		batch.dispose();
-        assets.dispose();
+//        assets.dispose();
 //		img.dispose();
 	}
 }
