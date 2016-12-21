@@ -45,6 +45,11 @@ public class CoreWarDebug extends CoreWar
         // TODO: Record lost warrior
     }
 
+//    TODO:
+//    TODO: mod.a 2, 1
+//    TODO: dat.a -15, 0
+//    TODO: dat.a 31, 1
+
     @Override
     public void initCore()
     {
