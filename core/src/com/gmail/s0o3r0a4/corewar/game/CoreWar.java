@@ -8,8 +8,6 @@ import com.gmail.s0o3r0a4.corewar.core.Warrior;
 
 import java.util.ArrayList;
 
-import static com.badlogic.gdx.Input.Keys.J;
-
 public abstract class CoreWar
 {
     protected int coreSize;
@@ -357,7 +355,7 @@ public abstract class CoreWar
                         case BA:
                             if (core[destination].getFieldA() == 0)
                             {
-                                currentProcess.setAddr(addressA - 1);
+                                currentProcess.setAddr(addressA - 1); // README: Add
                             }
                             break;
                         case B:
@@ -465,7 +463,7 @@ public abstract class CoreWar
     protected void killProcess()
     {
         currentWarrior.killProcess();
-        Gdx.app.debug("Kill current process", Integer.toString(currentAddress));
+        Gdx.app.debug("Kill current process", "address: " + Integer.toString(currentAddress));
 
         if (currentWarrior.getMaxProcesses() == 0)
         {
