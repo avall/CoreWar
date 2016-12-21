@@ -377,7 +377,65 @@ public abstract class CoreWar
                     }
                     break;
 
+                case JMN:
+                    switch (modifier)
+                    {
+                        case A:
+                        case BA:
+                            if (core[destination].getFieldA() != 0)
+                            {
+                                currentProcess.setAddr(addressA - 1);
+                            }
+                            break;
+                        case B:
+                        case AB:
+                            if (core[destination].getFieldB() != 0)
+                            {
+                                currentProcess.setAddr(addressA - 1);
+                            }
+                            break;
+                        case F:
+                        case X:
+                        case I:
+                            if (core[destination].getFieldA() != 0 ||core[destination].getFieldB() != 0)
+                            {
+                                currentProcess.setAddr(addressA - 1);
+                            }
+                            break;
+                    }
+                    break;
 
+                case DJN:
+                    switch (modifier)
+                    {
+                        case A:
+                        case BA:
+                            core[destination].setA(core[destination].getFieldA() - 1);
+                            if (core[destination].getFieldA() != 0)
+                            {
+                                currentProcess.setAddr(addressA - 1);
+                            }
+                            break;
+                        case B:
+                        case AB:
+                            core[destination].setB(core[destination].getFieldB() - 1);
+                            if (core[destination].getFieldB() != 0)
+                            {
+                                currentProcess.setAddr(addressA - 1);
+                            }
+                            break;
+                        case F:
+                        case X:
+                        case I:
+                            core[destination].setB(core[destination].getFieldB() - 1);
+                            core[destination].setB(core[destination].getFieldB() - 1);
+                            if (core[destination].getFieldA() != 0 ||core[destination].getFieldB() != 0)
+                            {
+                                currentProcess.setAddr(addressA - 1);
+                            }
+                            break;
+                    }
+                    break;
 
                 case DAT:
                 default:
