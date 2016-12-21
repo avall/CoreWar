@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Warrior
 {
-    private ArrayList<com.gmail.s0o3r0a4.corewar.core.Process> processes;
+    private ArrayList<Process> processes;
 
     private int currentProcess;
     private int maxProcesses;
@@ -17,9 +17,9 @@ public class Warrior
         this.maxProcesses = 1;
     }
 
-    public com.gmail.s0o3r0a4.corewar.core.Process getProcess()
+    public Process getProcess()
     {
-        if (processes.size() != 0)
+        if (processes.size() > 0)
         {
             return processes.get(currentProcess);
         }
@@ -29,8 +29,20 @@ public class Warrior
         }
     }
 
+    public Process getProcess(int index)
+    {
+        if (0 <= index && index < processes.size())
+        {
+            return processes.get(index);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     // README: Should only be called once in one cycle
-    public com.gmail.s0o3r0a4.corewar.core.Process nextProcess()
+    public Process nextProcess()
     {
         if (processes.size() != 0)
         {
@@ -55,7 +67,7 @@ public class Warrior
     public void addProcess(int address, int maxAddr)
     {
         maxProcesses++;
-        processes.add(currentProcess, new com.gmail.s0o3r0a4.corewar.core.Process(address, maxAddr));
+        processes.add(currentProcess, new Process(address, maxAddr));
     }
 
     public int getMaxProcesses()
