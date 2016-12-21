@@ -64,6 +64,7 @@ public abstract class CoreWar
 
             Gdx.app.debug(opCode.toString(), modeA.toString() + Integer.toString(fieldA) + " " +
                     modeB.toString() + Integer.toString(fieldB));
+            Gdx.app.debug("Address:" + Integer.toString(currentProcess.getAddr()), "Warrior ID: " + Integer.toString(warriorID));
 
             switch (modeA)
             {
