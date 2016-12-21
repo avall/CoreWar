@@ -13,7 +13,6 @@ import static com.gmail.s0o3r0a4.corewar.core.Instruction.OP_CODE.MOV;
 import static com.gmail.s0o3r0a4.corewar.core.Instruction.OP_CODE.ADD;
 import static com.gmail.s0o3r0a4.corewar.core.Instruction.OP_CODE.JMP;
 
-import com.badlogic.gdx.Gdx;
 import com.gmail.s0o3r0a4.corewar.core.Instruction;
 import com.gmail.s0o3r0a4.corewar.core.Process;
 import com.gmail.s0o3r0a4.corewar.core.Warrior;
@@ -53,7 +52,7 @@ public class CoreWarDebug extends CoreWar
     @Override
     public void initCore()
     {
-        for(int i = 0; i < coreSize; i++)
+        for (int i = 0; i < coreSize; i++)
         {
             core[i] = DAT00;
         }
@@ -69,7 +68,9 @@ public class CoreWarDebug extends CoreWar
         maxWarrior = 2;
 
         Warrior warrior = new Warrior(0, coreSize);
-        Warrior warrior2 = new Warrior(81-1, coreSize);
+        // README: Except first one Minus one (temp)
+        // TODO: Clean up this restriction
+        Warrior warrior2 = new Warrior(81 - 1, coreSize);
         warriors.add(warrior);
         warriors.add(warrior2);
         currentProcess = warrior.getProcess();
@@ -91,8 +92,7 @@ public class CoreWarDebug extends CoreWar
         if (core[i].getFieldA() != 0 || core[i].getFieldB() != 0)
         {
             return true;
-        }
-        else
+        } else
         {
             return false;
         }
@@ -111,24 +111,21 @@ public class CoreWarDebug extends CoreWar
     {
         initCore();
 
-        for(int step = 0; step < 10; step++)
+        for (int step = 0; step < 10; step++)
         {
             if (maxWarrior > 0)
             {
                 cycle();
             }
         }
-
-
-
 //        for(int i = 0; i < 125; i++)
 //        {
 //            String sentence = "";
-            for(int j = 0; j < 16; j++)
-            {
-                Gdx.app.log("", core[j].getOpCode().toString()+"."+core[j].getModifier().toString()+
-                                " "+core[j].getModeA().toString()+Integer.toString(core[j].getFieldA())+
-                                " "+core[j].getModeB().toString()+Integer.toString(core[j].getFieldB()));
+//            for(int j = 0; j < 16; j++)
+//            {
+//                Gdx.app.log("", core[j].getOpCode().toString()+"."+core[j].getModifier().toString()+
+//                                " "+core[j].getModeA().toString()+Integer.toString(core[j].getFieldA())+
+//                                " "+core[j].getModeB().toString()+Integer.toString(core[j].getFieldB()));
 //                if (core[j].getOpCode() == DAT)
 //                {
 //                    sentence += ".";
@@ -141,9 +138,8 @@ public class CoreWarDebug extends CoreWar
 //                {
 //                    sentence += "m";
 //                }
-            }
+    }
 //            Gdx.app.log("", sentence);
 //        }
-    }
-
+//    }
 }
