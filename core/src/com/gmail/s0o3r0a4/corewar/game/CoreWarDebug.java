@@ -62,7 +62,7 @@ public class CoreWarDebug extends CoreWar
         core[2] = new Instruction(JMP, AB, DIR, -2, DIR, 0);
         core[3] = new Instruction(DAT, F, IMM, 0, IMM, 0);
 
-        core[81] = new Instruction(MOV, I, DIR, 0, DIR, 1);
+        core[500] = new Instruction(MOV, I, DIR, 0, DIR, 1);
 
         warriorID = 0;
         maxWarrior = 2;
@@ -70,7 +70,7 @@ public class CoreWarDebug extends CoreWar
         Warrior warrior = new Warrior(0, coreSize);
         // README: Except first one Minus one (temp)
         // TODO: Clean up this restriction
-        Warrior warrior2 = new Warrior(81 - 1, coreSize);
+        Warrior warrior2 = new Warrior(500, coreSize);
         warriors.add(warrior);
         warriors.add(warrior2);
         currentProcess = warrior.getProcess();
