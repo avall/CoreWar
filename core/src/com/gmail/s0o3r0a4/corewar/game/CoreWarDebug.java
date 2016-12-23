@@ -82,6 +82,11 @@ public class CoreWarDebug extends CoreWar
         return getInstruction(address).getOpCode();
     }
 
+    public int getCurrentAddress()
+    {
+        return currentAddress;
+    }
+
     public int getCoreSize()
     {
         return coreSize;
