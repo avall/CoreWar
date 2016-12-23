@@ -440,6 +440,9 @@ public abstract class CoreWar
                 default:
                     killProcess();
             }
+
+            currentProcess.nextAddr();
+
             // README: This warrior is the next one
             // README: Side effect: ID++
             currentWarrior = nextWarrior();
@@ -447,7 +450,7 @@ public abstract class CoreWar
             if (currentWarrior != null)
             {
                 currentProcess = currentWarrior.nextProcess(); // README: This process is from the next warrior
-                currentAddress = currentProcess.nextAddr();
+                currentAddress = currentWarrior.getProcess().getAddr();
             }
 
         }
