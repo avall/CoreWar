@@ -1,8 +1,4 @@
-package com.gmail.s0o3r0a4.corewar.core;
-
-import com.gmail.s0o3r0a4.corewar.maths.Maths;
-
-import java.util.ArrayList;
+package com.gmail.s0o3r0a4.corewar.net.node.core;
 
 public class Instruction
 {

@@ -1,4 +1,4 @@
-package com.gmail.s0o3r0a4.corewar.core;
+package com.gmail.s0o3r0a4.corewar.net.node.core;
 
 import com.gmail.s0o3r0a4.corewar.maths.Maths;
 
