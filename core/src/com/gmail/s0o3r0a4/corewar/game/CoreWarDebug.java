@@ -2,20 +2,20 @@ package com.gmail.s0o3r0a4.corewar.game;
 
 import java.util.ArrayList;
 
-import static com.gmail.s0o3r0a4.corewar.core.Instruction.ADDR_MODE.DIR;
-import static com.gmail.s0o3r0a4.corewar.core.Instruction.ADDR_MODE.IMM;
-import static com.gmail.s0o3r0a4.corewar.core.Instruction.ADDR_MODE.IND;
-import static com.gmail.s0o3r0a4.corewar.core.Instruction.MODIFIER.F;
-import static com.gmail.s0o3r0a4.corewar.core.Instruction.MODIFIER.AB;
-import static com.gmail.s0o3r0a4.corewar.core.Instruction.MODIFIER.I;
-import static com.gmail.s0o3r0a4.corewar.core.Instruction.OP_CODE.DAT;
-import static com.gmail.s0o3r0a4.corewar.core.Instruction.OP_CODE.MOV;
-import static com.gmail.s0o3r0a4.corewar.core.Instruction.OP_CODE.ADD;
-import static com.gmail.s0o3r0a4.corewar.core.Instruction.OP_CODE.JMP;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.ADDR_MODE.DIR;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.ADDR_MODE.IMM;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.ADDR_MODE.IND;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.MODIFIER.F;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.MODIFIER.AB;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.MODIFIER.I;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.OP_CODE.DAT;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.OP_CODE.MOV;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.OP_CODE.ADD;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.OP_CODE.JMP;
 
-import com.gmail.s0o3r0a4.corewar.core.Instruction;
-import com.gmail.s0o3r0a4.corewar.core.Process;
-import com.gmail.s0o3r0a4.corewar.core.Warrior;
+import com.gmail.s0o3r0a4.corewar.net.node.core.Instruction;
+import com.gmail.s0o3r0a4.corewar.net.node.core.Process;
+import com.gmail.s0o3r0a4.corewar.net.node.core.Warrior;
 
 public class CoreWarDebug extends CoreWar
 {
@@ -62,17 +62,17 @@ public class CoreWarDebug extends CoreWar
         core[2] = new Instruction(JMP, AB, DIR, -2, DIR, 0);
         core[3] = new Instruction(DAT, F, IMM, 0, IMM, 0);
 
-        core[500] = new Instruction(MOV, I, DIR, 0, DIR, 1);
+//        core[500] = new Instruction(MOV, I, DIR, 0, DIR, 1);
 
         warriorID = 0;
-        maxWarrior = 2;
+        maxWarrior = 1;
 
         Warrior warrior = new Warrior(0, coreSize);
         // README: Except first one Minus one (temp)
         // TODO: Clean up this restriction
-        Warrior warrior2 = new Warrior(500, coreSize);
+//        Warrior warrior2 = new Warrior(500, coreSize);
         warriors.add(warrior);
-        warriors.add(warrior2);
+//        warriors.add(warrior2);
         currentProcess = warrior.getProcess();
         currentProcess.setAddr(0);
     }

@@ -1,10 +1,10 @@
 package com.gmail.s0o3r0a4.corewar.game;
 
 import com.badlogic.gdx.Gdx;
-import com.gmail.s0o3r0a4.corewar.core.Instruction;
+import com.gmail.s0o3r0a4.corewar.net.node.core.Instruction;
 import com.gmail.s0o3r0a4.corewar.maths.Maths;
-import com.gmail.s0o3r0a4.corewar.core.Process;
-import com.gmail.s0o3r0a4.corewar.core.Warrior;
+import com.gmail.s0o3r0a4.corewar.net.node.core.Process;
+import com.gmail.s0o3r0a4.corewar.net.node.core.Warrior;
 
 import java.util.ArrayList;
 
