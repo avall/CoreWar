@@ -36,7 +36,8 @@ public class SplashScreen implements Screen
 
         if (assets.manager.update())
         {
-            game.setScreen(new GameScreen(game, assets, new CoreWarDebug(8000)));
+//            game.setScreen(new GameScreen(game, assets, new CoreWarDebug(8000)));
+            game.setScreen(new NetScreen(game, assets));
         }
 
         stage.act(delta);
@@ -64,7 +65,7 @@ public class SplashScreen implements Screen
     @Override
     public void hide()
     {
-
+        this.dispose();
     }
 
     @Override

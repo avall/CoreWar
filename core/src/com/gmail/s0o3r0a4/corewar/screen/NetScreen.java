@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -29,10 +30,10 @@ import com.gmail.s0o3r0a4.corewar.screen.dimensions.GameScreenDimensions;
 
 import static com.badlogic.gdx.Gdx.input;
 import static com.badlogic.gdx.Input.Keys.G;
+import static com.badlogic.gdx.Input.Keys.P;
 
-public class GameScreen implements Screen
+public class NetScreen implements Screen
 {
-    private CoreWarDebug coreWarGame;
     private CoreWar coreWar;
 
     private OrthographicCamera camera;
@@ -44,34 +45,24 @@ public class GameScreen implements Screen
     private Texture blockTexture;
     private TextureRegion blockTextureRegion;
     private TextureRegionDrawable blockTexRegionDrawable;
-    public Array<ImageButton> blocks;
 
     private TextureRegion FABTextureRegion;
     private TextureRegionDrawable FABTexRegionDrawable;
     private ImageButton FAButton;
 
-    private Table scrollTable;
-    private ScrollPane scroller;
-
     private float screenWidth;
     private float screenHeight;
 
-    private float coreOffsetX = GameScreenDimensions.CORE_OFFSET_X1;
-    private float coreOffsetX2 = GameScreenDimensions.CORE_OFFSET_X2;
-    private float coreOffsetY = GameScreenDimensions.CORE_OFFSET_Y;
-    private float coreOffsetY2 = GameScreenDimensions.CORE_OFFSET_Y2;
-    private float coreColGap = GameScreenDimensions.CORE_COL_GAP;
-    private float coreRowGap = GameScreenDimensions.CORE_ROW_GAP;
-
-    private float blocksCol = GameScreenDimensions.BLOCKS_COL;
-    private float blocksRow = GameScreenDimensions.BLOCKS_ROW;
-
     private Net testNet;
     private ImageButton testButton;
+    private ImageButton testButton2;
+    private ImageButton testButton3;
+//    private Sprite testButton;
 
-    public GameScreen(CoreWar game, Assets assets, final CoreWarDebug coreWarGame)
+    private boolean testOnce = false;
+
+    public NetScreen(CoreWar game, Assets assets)
     {
-        this.coreWarGame = coreWarGame;
         this.coreWar = game;
         this.stage = new Stage();
         this.assets = assets;
@@ -94,49 +85,35 @@ public class GameScreen implements Screen
         Skin skin = assets.manager.get(Assets.uiSkin);
         blockTexture = assets.manager.get(Assets.blockTexture);
 
-        // README: Create all blocks of the core
-        float blockColSize = (stage.getWidth()/* - (coreColGap * (blocksCol + 1))*/) / blocksCol;
-        float blockRowSize = (stage.getWidth()/* - (coreColGap * (blocksCol + 1))*/) / blocksCol;
-        if (blockColSize < coreColGap * 2 + 1)
-        {
-            blockColSize = coreColGap * 2 + 1;
-        }
-        if (blockRowSize < coreRowGap * 2 + 1)
-        {
-            blockColSize = coreRowGap * 2 + 1;
-        }
         blockTextureRegion = new TextureRegion(blockTexture);
-        blockTextureRegion.setRegionWidth((int) blockColSize - (int)coreColGap * 2);
-        blockTextureRegion.setRegionHeight((int) blockRowSize - (int)coreRowGap * 2);
+        blockTextureRegion.setRegionWidth(30);
+        blockTextureRegion.setRegionHeight(30);
         blockTexRegionDrawable = new TextureRegionDrawable(blockTextureRegion);
-        blocks = new Array<ImageButton>();
-        scrollTable = new Table();
-        for (int i = 0; i < blocksRow; i++)
-        {
-            for (int j = 0; j < blocksCol; j++)
-            {
-                blocks.add(new ImageButton(blockTexRegionDrawable));
-                scrollTable.add(blocks.peek()).size(blockColSize)/*.pad(0coreColGap / 2)*/;
-            }
-            scrollTable.row();
-        }
-        scroller = new ScrollPane(scrollTable);
 
         // TODO: Test Net
         testNet = new Net(screenWidth, screenHeight);
         testButton = new ImageButton(blockTexRegionDrawable);
+        testButton2 = new ImageButton(blockTexRegionDrawable);
+        testButton3 = new ImageButton(blockTexRegionDrawable);
+        // TODO: Add visible true after creating the table
+        testButton.setVisible(false);
+        testButton2.setVisible(false);
+        testButton3.setVisible(false);
+//        testButton = new Sprite(blockTexture);
         Table testTable = new Table();
         testTable.setFillParent(true);
-        testTable.add(testButton);
+        testTable.add(testButton).expand().bottom().left();
+        testTable.add(testButton2).expand().bottom().left();
+        testTable.add(testButton3).expand().bottom().left();
+        testNet.update();
+//        testButton.setPosition((float)testNet.x, (float)testNet.y);
         ScrollPane scroller2 = new ScrollPane(testTable);
-
-        // README: SplitPane here
-        SplitPane splitter = new SplitPane(scroller, scroller2, true, skin);
+        scroller2.setFillParent(true);
 
         // README: Create an overlay table for the stack
         final Table underLayTable = new Table();
         underLayTable.setFillParent(true);
-        underLayTable.add(splitter).expandX().fillX().bottom();
+        underLayTable.add(scroller2).expand().bottom().left();
         underLayTable.row();
 
         // README: Add a Floating Action Button
@@ -148,10 +125,6 @@ public class GameScreen implements Screen
         {
             public void changed(ChangeEvent event, Actor actor)
             {
-                scroller.setScrollPercentY(((float) coreWarGame.getCurrentAddress() -
-                        blocksCol / scroller.getWidth() * scroller.getHeight() / 2f * blocksCol) /
-                        (float) coreWarGame.getCoreSize());
-                coreWarGame.cycle();
             }
         });
 
@@ -166,16 +139,21 @@ public class GameScreen implements Screen
         stack.add(underLayTable);
         stack.add(FABContainer);
 
+        testButton.setVisible(true);
+        testButton2.setVisible(true);
+        testButton3.setVisible(true);
+
         // README: Add stack to the stage
         this.stage.addActor(stack);
         input.setInputProcessor(this.stage);
 
         // TODO: Put all startup debug information here
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        Gdx.app.debug("Game Screen", "Created");
-        Gdx.app.debug("Block size", Float.toString(blockColSize));
+        Gdx.app.debug("Net Screen", "Created");
         Gdx.app.debug("Stage width", Float.toString(stage.getWidth()));
-        Gdx.app.debug("Block width", Float.toString(blockColSize));
+        Gdx.app.debug("Stage height", Float.toString(stage.getHeight()));
+        Gdx.app.debug(Float.toString((float)testNet.x), Float.toString((float)testNet.y));
+        Gdx.app.debug(Float.toString((float)testNet.eneX), Float.toString((float)testNet.eneY));
     }
 
     @Override
@@ -204,58 +182,15 @@ public class GameScreen implements Screen
         stage.act();
         stage.draw();
 
+//        coreWar.batch.draw(testButton, );
+
         coreWar.batch.end();
-
-        for (int i = 0; i < (int) (0 * Gdx.graphics.getDeltaTime()); i++)
-        {
-            coreWarGame.cycle();
-        }
-
-
-        for (int i = 0; i < coreWarGame.getCoreSize(); i++)
-        {
-            ImageButton button = blocks.get(i);
-            switch (coreWarGame.getType(i))
-            {
-                case MOV:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.YELLOW);
-                    break;
-                case ADD:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.RED);
-                    break;
-                case SUB:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.BLUE);
-                    break;
-                case MUL:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.ORANGE);
-                    break;
-                case DIV:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.GREEN);
-                    break;
-                case MOD:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.CYAN);
-                    break;
-                case JMP:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.PINK);
-                    break;
-                case JMZ:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.PURPLE);
-                    break;
-                case DAT:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.GRAY);
-                    if (coreWarGame.isUnempty(i))
-                    {
-                        button.getImage().setColor(com.badlogic.gdx.graphics.Color.BLACK);
-                    }
-                    break;
-            }
-        }
 
         // TODO: Test Net
         testNet.update();
-        Gdx.app.debug(Float.toString((float)testNet.x), Float.toString((float)testNet.y));
         testButton.setPosition((float)testNet.x, (float)testNet.y);
-
+        testButton2.setPosition((float)testNet.eneX, (float)testNet.eneY);
+        testButton3.setPosition((float)testNet.thirdX, (float)testNet.thirdY);
 
         // README: Get input
         if ((Gdx.input.isKeyPressed(Input.Keys.BACK)))
@@ -283,7 +218,6 @@ public class GameScreen implements Screen
     @Override
     public void pause()
     {
-        coreWar.setScreen(new MainMenuScreen(coreWar, assets));
     }
 
     @Override
