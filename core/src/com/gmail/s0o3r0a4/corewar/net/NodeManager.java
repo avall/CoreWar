@@ -1,65 +1,64 @@
 package com.gmail.s0o3r0a4.corewar.net;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Sort;
+import com.badlogic.gdx.utils.IntIntMap;
 import com.gmail.s0o3r0a4.corewar.net.node.Node;
 import com.gmail.s0o3r0a4.corewar.net.node.NodeAddr;
 import com.gmail.s0o3r0a4.corewar.net.node.Port;
-import com.gmail.s0o3r0a4.corewar.net.node.core.Instruction;
 
-import java.util.Collections;
 import java.util.Comparator;
-
-import static javax.swing.UIManager.get;
+import java.util.HashMap;
 
 public class NodeManager {
-    private Array<Node> nodes; // TODO: From now on most of the array should be the array from LibGdx
+//    private Array<Node> nodes; // TODO: From now on most of the array should be the array from LibGdx
+    private HashMap<NodeAddr, Node> nodes;
     private int shownNodeIndex;
 
-    public NodeManager(Array<Node> nodes, int shownNodeIndex) {
+    public NodeManager(HashMap<NodeAddr, Node> nodes, int shownNodeIndex) {
         this.nodes = nodes;
         this.shownNodeIndex = shownNodeIndex;
         sort();
     }
 
     public void cycle() {
-        for (int i = 0; i < nodes.size; i++) {
+        for (int i = 0; i < nodes.size(); i++) {
             nodes.get(i).cycle();
         }
 
         send();
         flush();
     }
-
-
+    
     public Node getShownNode() {
         return nodes.get(shownNodeIndex);
     }
 
     public void sort() {
-        nodes.sort(new Comparator<Node>() {
-            @Override
-            public int compare(Node node1, Node node2) {
-                if (node1.getStartupTime() > node2.getStartupTime())
-                    return 1;
-                else
-                    return -1;
-            }
-        });
+//        nodes.sort(new Comparator<Node>() {
+//            @Override
+//            public int compare(Node node1, Node node2) {
+//                if (node1.getStartupTime() > node2.getStartupTime())
+//                    return 1;
+//                else
+//                    return -1;
+//            }
+//        });
+
     }
 
     public void flush() {
-        for (int i = 0; i < nodes.size; i++) {
-            for (int j = 0; j < nodes.get(i).getPortsSize(); j++) {
-                nodes.get(i).getPort(j).flush();
+        for (int i = 0; i < nodes.size(); i++) {
+            Node node = nodes.get(i);
+            if (node.isReceving()) {
+                int j = node.getReceivingPort();
+                node.getPort(j).flush();
+                node.closeReceiving();
             }
         }
     }
 
     public void send() {
-        for (int i = 0; i < nodes.size; i++) {
+        for (int i = 0; i < nodes.size(); i++) {
             Node node1 = nodes.get(i);
             if (node1.isSending()) {
                 Port port = node1.getPort(node1.getSendingPort());
@@ -67,9 +66,26 @@ public class NodeManager {
 
                 int node2PortID = port.getPortID(node2);
 
-                int j = nodes.indexOf(node2, false);
+//                int j = nodes.indexOf(node2, false);
 
-                nodes.get(j).getPort(node2PortID).writeOut(node2, port.readIn(node1));
+                node2 = nodes.get(node2.getAddr());
+//                int j = nodes.get(nodeAddr.toString());
+
+                node2.getPort(node2PortID).writeOut(node2, port.readIn(node1));
+                node2.openReceiving(node2PortID);
+                node1.closeSending();
+            }
+        }
+    }
+
+    public void invite() {
+        for (int i = 0; i < nodes.size(); i++) {
+            Node node1 = nodes.get(i);
+            if (node1.isInviting()) {
+                NodeAddr nodeAddr = node1.getInvitingAddr();
+                Node node2 = nodes.get(nodeAddr);
+                node1.invite(node2);
+                node2.invitedBy(node1);
             }
         }
     }

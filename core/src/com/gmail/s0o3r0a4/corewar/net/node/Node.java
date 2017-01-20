@@ -24,20 +24,26 @@ public class Node extends Core {
     private float startupTime;
     private int maxPorts;
 
-    private boolean receving;
-    private boolean sending;
+    private boolean receiving = false;
+    private boolean sending = false;
 
-    private int sendingPort;
+    private int sendingPort = 0;
+    private int receivingPort = 0;
+
+    private boolean inviting = false;
+    private NodeAddr invitingAddr;
 
     private static final Instruction DAT00 = new Instruction(DAT, F, DIR, 0, DIR, 0);
 
-    public Node(int coreSize, NodeAddr nodeAddr, float startupTime) {
+    public Node(int coreSize, NodeAddr nodeAddr, float startupTime, int maxPorts) {
         super(coreSize);
         this.currentProcess = new Process(0, coreSize); // TODO: Add new constructor
         this.warriors = new ArrayList<Warrior>();
         this.nodeAddr = nodeAddr;
         this.ports = new ArrayList<Port>();
         this.startupTime = startupTime;
+        this.maxPorts = maxPorts;
+        this.invitingAddr = new NodeAddr(0, 0);
         initCore();
     }
 
@@ -47,6 +53,8 @@ public class Node extends Core {
         this.warriors = new ArrayList<Warrior>();
         this.nodeAddr = new NodeAddr(0, 0);
         this.ports = new ArrayList<Port>();
+        this.startupTime = 0.0f;
+        this.maxPorts = 0;
         initCore();
     }
 
@@ -145,8 +153,11 @@ public class Node extends Core {
                     break;
 
                 case OUT:
-                    if (0 <= addressA && addressA < ports.size())
+                    if (0 <= addressA && addressA < ports.size()) {
                         ports.get(addressA).writeOut(this, core[destination]);
+                        sending = true;
+                        sendingPort = addressA;
+                    }
                     // TODO: Write to another node's port
                     break;
 
@@ -155,11 +166,13 @@ public class Node extends Core {
                         core[currentAddress].setA(ports.get(addressB).getConnectedNodeAddr(this).addr1);
                         core[currentAddress].setB(ports.get(addressB).getConnectedNodeAddr(this).addr2);
                     } else if (addressA == 1) {
-
+                        // TODO: Connect to private node
                     } else {
+                        inviting = true;
                         if (nodeAddr.addr1 != 1) {
                             // TODO: Public node
                         } else {
+
                             // TODO: Private node (No public connection)
                         }
 
@@ -245,15 +258,40 @@ public class Node extends Core {
     }
 
     public boolean isReceving() {
-        return receving;
+        return receiving;
     }
 
     public boolean isSending() {
         return sending;
     }
 
+    public void closeSending() {
+        sending = false;
+    }
+
     public int getSendingPort() {
         return sendingPort;
+    }
+
+    public int getReceivingPort() {
+        return receivingPort;
+    }
+
+    public void openReceiving(int portID) {
+        this.receiving = true;
+        this.receivingPort = portID;
+    }
+
+    public void closeReceiving() {
+        this.receiving = false;
+    }
+
+    public boolean isInviting() {
+        return inviting;
+    }
+
+    public void cloaseInviting() {
+        this.inviting = false;
     }
 
     public Port getPort(int portID) {
@@ -262,5 +300,33 @@ public class Node extends Core {
 
     public int getPortsSize() {
         return ports.size();
+    }
+
+    public NodeAddr getInvitingAddr() {
+        return invitingAddr;
+    }
+
+    public void invite(Node node) {
+        int portID = ports.indexOf(null);
+        Port port = new Port(this, node);
+
+        if (portID != -1) {
+            this.ports.set(portID, port);
+        } else {
+            ports.add(port);
+        }
+
+        inviting = false;
+    }
+
+    public void invitedBy(Node node) {
+        int portID = ports.indexOf(null);
+        Port port = new Port(this, node);
+
+        if (portID != -1) {
+            this.ports.set(portID, port);
+        } else {
+            ports.add(port);
+        }
     }
 }
