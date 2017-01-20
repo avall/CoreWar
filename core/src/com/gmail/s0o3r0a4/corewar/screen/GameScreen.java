@@ -3,6 +3,7 @@ package com.gmail.s0o3r0a4.corewar.screen;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -19,20 +20,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Base64Coder;
+import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.gmail.s0o3r0a4.corewar.CoreWar;
 import com.gmail.s0o3r0a4.corewar.assets.Assets;
-import com.gmail.s0o3r0a4.corewar.game.CoreWarDebug;
 import com.gmail.s0o3r0a4.corewar.net.Net;
 import com.gmail.s0o3r0a4.corewar.net.node.Node;
 import com.gmail.s0o3r0a4.corewar.screen.dimensions.GameScreenDimensions;
 
+import static com.badlogic.gdx.Gdx.app;
 import static com.badlogic.gdx.Gdx.input;
-import static com.badlogic.gdx.Input.Keys.G;
 
-public class GameScreen implements Screen
-{
-    private CoreWarDebug coreWarGame;
+public class GameScreen implements Screen {
+    //    private CoreDebug coreWarGame;
+    private Node nodeWarGame;
     private CoreWar coreWar;
 
     private OrthographicCamera camera;
@@ -69,17 +72,27 @@ public class GameScreen implements Screen
     private Net testNet;
     private ImageButton testButton;
 
-    public GameScreen(CoreWar game, Assets assets, final CoreWarDebug coreWarGame)
-    {
-        this.coreWarGame = coreWarGame;
+    private Preferences prefs;
+
+//    private FileHandle file = Gdx.files.local("save/"+nodeWarGame.getAddr().toString()+".json");
+
+//    public GameScreen(CoreWar game, Assets assets, final CoreDebug coreWarGame)
+//    {
+//        this.coreWarGame = coreWarGame;
+//        this.coreWar = game;
+//        this.stage = new Stage();
+//        this.assets = assets;
+//    }
+
+    public GameScreen(CoreWar game, Assets assets, Node nodeWarGame) {
+        this.nodeWarGame = nodeWarGame;
         this.coreWar = game;
         this.stage = new Stage();
         this.assets = assets;
     }
 
     @Override
-    public void show()
-    {
+    public void show() {
         // README: Get screen size
         this.screenWidth = Gdx.graphics.getWidth();
         this.screenHeight = Gdx.graphics.getHeight();
@@ -97,24 +110,20 @@ public class GameScreen implements Screen
         // README: Create all blocks of the core
         float blockColSize = (stage.getWidth()/* - (coreColGap * (blocksCol + 1))*/) / blocksCol;
         float blockRowSize = (stage.getWidth()/* - (coreColGap * (blocksCol + 1))*/) / blocksCol;
-        if (blockColSize < coreColGap * 2 + 1)
-        {
+        if (blockColSize < coreColGap * 2 + 1) {
             blockColSize = coreColGap * 2 + 1;
         }
-        if (blockRowSize < coreRowGap * 2 + 1)
-        {
+        if (blockRowSize < coreRowGap * 2 + 1) {
             blockColSize = coreRowGap * 2 + 1;
         }
         blockTextureRegion = new TextureRegion(blockTexture);
-        blockTextureRegion.setRegionWidth((int) blockColSize - (int)coreColGap * 2);
-        blockTextureRegion.setRegionHeight((int) blockRowSize - (int)coreRowGap * 2);
+        blockTextureRegion.setRegionWidth((int) blockColSize - (int) coreColGap * 2);
+        blockTextureRegion.setRegionHeight((int) blockRowSize - (int) coreRowGap * 2);
         blockTexRegionDrawable = new TextureRegionDrawable(blockTextureRegion);
         blocks = new Array<ImageButton>();
         scrollTable = new Table();
-        for (int i = 0; i < blocksRow; i++)
-        {
-            for (int j = 0; j < blocksCol; j++)
-            {
+        for (int i = 0; i < blocksRow; i++) {
+            for (int j = 0; j < blocksCol; j++) {
                 blocks.add(new ImageButton(blockTexRegionDrawable));
                 scrollTable.add(blocks.peek()).size(blockColSize)/*.pad(0coreColGap / 2)*/;
             }
@@ -143,22 +152,20 @@ public class GameScreen implements Screen
         FABTextureRegion = new TextureRegion(blockTexture);
         FABTexRegionDrawable = new TextureRegionDrawable(FABTextureRegion);
         FAButton = new ImageButton(blockTexRegionDrawable);
-        FAButton.bottom().right().pad(20);
-        FAButton.addListener(new ChangeListener()
-        {
-            public void changed(ChangeEvent event, Actor actor)
-            {
-                scroller.setScrollPercentY(((float) coreWarGame.getCurrentAddress() -
+        FAButton.bottom().right();
+        FAButton.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                scroller.setScrollPercentY(((float) nodeWarGame.getCurrentAddress() -
                         blocksCol / scroller.getWidth() * scroller.getHeight() / 2f * blocksCol) /
-                        (float) coreWarGame.getCoreSize());
-                coreWarGame.cycle();
+                        (float) nodeWarGame.getCoreSize());
+                nodeWarGame.cycle();
             }
         });
 
         // README: Add the FAButton to the FABContainer
         Table FABContainer = new Table();
         FABContainer.setFillParent(true);
-        FABContainer.add(FAButton).expand().bottom().right();
+        FABContainer.add(FAButton).expand().bottom().right().pad(20);
 
         // README: Stack up the content and FAB
         Stack stack = new Stack();
@@ -171,16 +178,15 @@ public class GameScreen implements Screen
         input.setInputProcessor(this.stage);
 
         // TODO: Put all startup debug information here
-        Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        Gdx.app.debug("Game Screen", "Created");
-        Gdx.app.debug("Block size", Float.toString(blockColSize));
-        Gdx.app.debug("Stage width", Float.toString(stage.getWidth()));
-        Gdx.app.debug("Block width", Float.toString(blockColSize));
+        app.setLogLevel(Application.LOG_DEBUG);
+        app.debug("Game Screen", "Created");
+        app.debug("Block size", Float.toString(blockColSize));
+        app.debug("Stage width", Float.toString(stage.getWidth()));
+        app.debug("Block width", Float.toString(blockColSize));
     }
 
     @Override
-    public void render(float delta)
-    {
+    public void render(float delta) {
         // clear the screen with a black color. The
         // arguments to glClearColor are the red, green
         // blue and alpha component in the range [0,1]
@@ -206,17 +212,14 @@ public class GameScreen implements Screen
 
         coreWar.batch.end();
 
-        for (int i = 0; i < (int) (0 * Gdx.graphics.getDeltaTime()); i++)
-        {
-            coreWarGame.cycle();
+        for (int i = 0; i < (int) (0 * Gdx.graphics.getDeltaTime()); i++) {
+            nodeWarGame.cycle();
         }
 
 
-        for (int i = 0; i < coreWarGame.getCoreSize(); i++)
-        {
+        for (int i = 0; i < nodeWarGame.getCoreSize(); i++) {
             ImageButton button = blocks.get(i);
-            switch (coreWarGame.getType(i))
-            {
+            switch (nodeWarGame.getType(i)) {
                 case MOV:
                     button.getImage().setColor(com.badlogic.gdx.graphics.Color.YELLOW);
                     break;
@@ -243,8 +246,7 @@ public class GameScreen implements Screen
                     break;
                 case DAT:
                     button.getImage().setColor(com.badlogic.gdx.graphics.Color.GRAY);
-                    if (coreWarGame.isUnempty(i))
-                    {
+                    if (nodeWarGame.isUnempty(i)) {
                         button.getImage().setColor(com.badlogic.gdx.graphics.Color.BLACK);
                     }
                     break;
@@ -253,23 +255,37 @@ public class GameScreen implements Screen
 
         // TODO: Test Net
         testNet.update();
-        Gdx.app.debug(Float.toString((float)testNet.x), Float.toString((float)testNet.y));
-        testButton.setPosition((float)testNet.x, (float)testNet.y);
+//        Gdx.app.debug(Float.toString((float)testNet.x), Float.toString((float)testNet.y));
+//        testButton.setPosition((float)testNet.x, (float)testNet.y);
 
 
         // README: Get input
-        if ((Gdx.input.isKeyPressed(Input.Keys.BACK)))
-        {
-            Gdx.app.debug("hi", "auntie");
-            coreWar.setScreen(new MainMenuScreen(coreWar, assets));
+        if ((Gdx.input.isKeyPressed(Input.Keys.BACK))) {
+            app.debug("hi", "auntie");
+
+//            Hashtable<String, String> hashTable = new Hashtable<String, String>();
+
+            Json json = new Json(JsonWriter.OutputType.minimal);
+
+//            Base64Coder.encodeString(json.toJson(nodeWarGame));
+
+//            hashTable.put(nodeWarGame.getAddr().toString(), Base64Coder.encodeString(json.toJson(nodeWarGame)));
+
+            prefs = Gdx.app.getPreferences("save_0");
+            prefs.putString(nodeWarGame.getAddr().toString(), Base64Coder.encodeString(json.toJson(nodeWarGame)));
+
+            prefs.flush();
+
+            coreWar.setScreen(new NetScreen(coreWar, assets));
+//            file.writeString(Base64Coder.encodeString(json.toJson(nodeWarGame)), false);
+
         }
 
     }
 
 
     @Override
-    public void resize(int width, int height)
-    {
+    public void resize(int width, int height) {
 //        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -281,26 +297,22 @@ public class GameScreen implements Screen
     }
 
     @Override
-    public void pause()
-    {
-        coreWar.setScreen(new MainMenuScreen(coreWar, assets));
-    }
-
-    @Override
-    public void resume()
-    {
+    public void pause() {
 
     }
 
     @Override
-    public void hide()
-    {
+    public void resume() {
 
     }
 
     @Override
-    public void dispose()
-    {
+    public void hide() {
+
+    }
+
+    @Override
+    public void dispose() {
         stage.dispose();
     }
 }
