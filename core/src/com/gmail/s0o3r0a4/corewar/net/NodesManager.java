@@ -9,15 +9,26 @@ import com.gmail.s0o3r0a4.corewar.net.node.Port;
 import java.util.Comparator;
 import java.util.HashMap;
 
-public class NodeManager {
+public class NodesManager {
 //    private Array<Node> nodes; // TODO: From now on most of the array should be the array from LibGdx
     private HashMap<NodeAddr, Node> nodes;
     private int shownNodeIndex;
 
-    public NodeManager(HashMap<NodeAddr, Node> nodes, int shownNodeIndex) {
+    public NodesManager() {
+    }
+
+    public NodesManager(HashMap<NodeAddr, Node> nodes, int shownNodeIndex) {
         this.nodes = nodes;
         this.shownNodeIndex = shownNodeIndex;
         sort();
+    }
+
+    public void initNodes() {
+
+    }
+
+    public void initGame() {
+
     }
 
     public void cycle() {
@@ -27,6 +38,18 @@ public class NodeManager {
 
         send();
         flush();
+    }
+
+    public void newNode(NodeAddr nodeAddr, Node node) {
+        nodes.put(nodeAddr, node);
+    }
+
+    public void save(String filename) {
+
+    }
+
+    public void load(String filename) {
+
     }
     
     public Node getShownNode() {

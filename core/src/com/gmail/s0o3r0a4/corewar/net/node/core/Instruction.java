@@ -19,7 +19,7 @@ public class Instruction {
         IN,
         OUT,
         CON,
-        DCN;
+        DCN
     }
 
     public enum MODIFIER {
@@ -29,13 +29,18 @@ public class Instruction {
         BA,
         F,
         X,
-        I;
+        I
     }
 
     public enum ADDR_MODE {
         IMM,
         DIR,
-        IND;
+        IND,
+        INDA,
+        PDI,
+        PDIA,
+        PII,
+        PIIA
     }
 
     public Instruction(OP_CODE operation, MODIFIER modifier, ADDR_MODE modeA, int fieldA, ADDR_MODE modeB, int fieldB) {

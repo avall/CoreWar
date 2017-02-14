@@ -73,7 +73,31 @@ public abstract class Core {
                     break;
 
                 case IND:
+                    addressA = core[Maths.mod(fieldA + currentAddress, coreSize)].getFieldB() + fieldA;
+                    break;
+
+                case INDA:
                     addressA = core[Maths.mod(fieldA + currentAddress, coreSize)].getFieldA() + fieldA;
+                    break;
+
+                case PDI:
+                    core[Maths.mod(fieldA + currentAddress, coreSize)].setB(core[Maths.mod(fieldA + currentAddress, coreSize)].getFieldB() - 1);
+                    addressA = core[Maths.mod(fieldA + currentAddress, coreSize)].getFieldB() + fieldA;
+                    break;
+
+                case PDIA:
+                    core[Maths.mod(fieldA + currentAddress, coreSize)].setA(core[Maths.mod(fieldA + currentAddress, coreSize)].getFieldA() - 1);
+                    addressA = core[Maths.mod(fieldA + currentAddress, coreSize)].getFieldA() + fieldA;
+                    break;
+
+                case PII:
+                    addressA = core[Maths.mod(fieldA + currentAddress, coreSize)].getFieldB() + fieldA;
+                    core[Maths.mod(fieldA + currentAddress, coreSize)].setB(core[Maths.mod(fieldA + currentAddress, coreSize)].getFieldB() + 1);
+                    break;
+
+                case PIIA:
+                    addressA = core[Maths.mod(fieldA + currentAddress, coreSize)].getFieldA() + fieldA;
+                    core[Maths.mod(fieldA + currentAddress, coreSize)].setA(core[Maths.mod(fieldA + currentAddress, coreSize)].getFieldA() + 1);
                     break;
             }
 
@@ -91,6 +115,30 @@ public abstract class Core {
 
                 case IND:
                     addressB = core[Maths.mod(fieldB + currentAddress, coreSize)].getFieldB() + fieldB;
+                    break;
+
+                case INDA:
+                    addressB = core[Maths.mod(fieldB + currentAddress, coreSize)].getFieldA() + fieldB;
+                    break;
+
+                case PDI:
+                    core[Maths.mod(fieldB + currentAddress, coreSize)].setB(core[Maths.mod(fieldB + currentAddress, coreSize)].getFieldB() - 1);
+                    addressB = core[Maths.mod(fieldB + currentAddress, coreSize)].getFieldB() + fieldB;
+                    break;
+
+                case PDIA:
+                    core[Maths.mod(fieldB + currentAddress, coreSize)].setA(core[Maths.mod(fieldB + currentAddress, coreSize)].getFieldA() - 1);
+                    addressB = core[Maths.mod(fieldB + currentAddress, coreSize)].getFieldA() + fieldB;
+                    break;
+
+                case PII:
+                    addressB = core[Maths.mod(fieldB + currentAddress, coreSize)].getFieldB() + fieldB;
+                    core[Maths.mod(fieldB + currentAddress, coreSize)].setB(core[Maths.mod(fieldB + currentAddress, coreSize)].getFieldB() + 1);
+                    break;
+
+                case PIIA:
+                    addressB = core[Maths.mod(fieldB + currentAddress, coreSize)].getFieldA() + fieldB;
+                    core[Maths.mod(fieldB + currentAddress, coreSize)].setA(core[Maths.mod(fieldB + currentAddress, coreSize)].getFieldA() + 1);
                     break;
             }
 

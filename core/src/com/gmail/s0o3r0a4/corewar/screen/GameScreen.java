@@ -5,18 +5,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
@@ -26,7 +29,6 @@ import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.gmail.s0o3r0a4.corewar.CoreWar;
 import com.gmail.s0o3r0a4.corewar.assets.Assets;
-import com.gmail.s0o3r0a4.corewar.net.Net;
 import com.gmail.s0o3r0a4.corewar.net.node.Node;
 import com.gmail.s0o3r0a4.corewar.screen.dimensions.GameScreenDimensions;
 
@@ -51,7 +53,7 @@ public class GameScreen implements Screen {
 
     private TextureRegion FABTextureRegion;
     private TextureRegionDrawable FABTexRegionDrawable;
-    private ImageButton FAButton;
+    private Button FAButton;
 
     private Table scrollTable;
     private ScrollPane scroller;
@@ -69,7 +71,7 @@ public class GameScreen implements Screen {
     private float blocksCol = GameScreenDimensions.BLOCKS_COL;
     private float blocksRow = GameScreenDimensions.BLOCKS_ROW;
 
-    private Net testNet;
+//    private Net testNet;
     private ImageButton testButton;
 
     private Preferences prefs;
@@ -132,7 +134,7 @@ public class GameScreen implements Screen {
         scroller = new ScrollPane(scrollTable);
 
         // TODO: Test Net
-        testNet = new Net(screenWidth, screenHeight);
+//        testNet = new Net(screenWidth, screenHeight);
         testButton = new ImageButton(blockTexRegionDrawable);
         Table testTable = new Table();
         testTable.setFillParent(true);
@@ -151,8 +153,18 @@ public class GameScreen implements Screen {
         // README: Add a Floating Action Button
         FABTextureRegion = new TextureRegion(blockTexture);
         FABTexRegionDrawable = new TextureRegionDrawable(FABTextureRegion);
-        FAButton = new ImageButton(blockTexRegionDrawable);
+//        FAButton = new ImageButton(blockTexRegionDrawable);
+        FAButton = new Button();
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = skin.getFont("default-font");
+        textButtonStyle.up = FABTexRegionDrawable;
+        textButtonStyle.down = FABTexRegionDrawable;
+        textButtonStyle.checked = FABTexRegionDrawable;
+
+        FAButton.setStyle(textButtonStyle);
+        FAButton.setBackground(FABTexRegionDrawable);
         FAButton.bottom().right();
+
         FAButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 scroller.setScrollPercentY(((float) nodeWarGame.getCurrentAddress() -
@@ -165,7 +177,9 @@ public class GameScreen implements Screen {
         // README: Add the FAButton to the FABContainer
         Table FABContainer = new Table();
         FABContainer.setFillParent(true);
-        FABContainer.add(FAButton).expand().bottom().right().pad(20);
+
+        FABContainer.add(FAButton).size((int) (screenWidth * 0.1), (int) (screenWidth * 0.1))
+                .expand().bottom().right().pad((int) (screenWidth * 0.05));;
 
         // README: Stack up the content and FAB
         Stack stack = new Stack();
@@ -221,46 +235,46 @@ public class GameScreen implements Screen {
             ImageButton button = blocks.get(i);
             switch (nodeWarGame.getType(i)) {
                 case MOV:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.YELLOW);
+                    button.getImage().setColor(Color.YELLOW);
                     break;
                 case ADD:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.RED);
+                    button.getImage().setColor(Color.RED);
                     break;
                 case SUB:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.BLUE);
+                    button.getImage().setColor(Color.BLUE);
                     break;
                 case MUL:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.ORANGE);
+                    button.getImage().setColor(Color.ORANGE);
                     break;
                 case DIV:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.GREEN);
+                    button.getImage().setColor(Color.GREEN);
                     break;
                 case MOD:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.CYAN);
+                    button.getImage().setColor(Color.CYAN);
                     break;
                 case JMP:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.PINK);
+                    button.getImage().setColor(Color.PINK);
                     break;
                 case JMZ:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.PURPLE);
+                    button.getImage().setColor(Color.PURPLE);
                     break;
                 case DAT:
-                    button.getImage().setColor(com.badlogic.gdx.graphics.Color.GRAY);
+                    button.getImage().setColor(Color.GRAY);
                     if (nodeWarGame.isUnempty(i)) {
-                        button.getImage().setColor(com.badlogic.gdx.graphics.Color.BLACK);
+                        button.getImage().setColor(Color.DARK_GRAY);
                     }
                     break;
             }
         }
 
         // TODO: Test Net
-        testNet.update();
+//        testNet.update();
 //        Gdx.app.debug(Float.toString((float)testNet.x), Float.toString((float)testNet.y));
 //        testButton.setPosition((float)testNet.x, (float)testNet.y);
 
 
         // README: Get input
-        if ((Gdx.input.isKeyPressed(Input.Keys.BACK))) {
+        if ((Gdx.input.isKeyJustPressed(Input.Keys.BACK)) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             app.debug("hi", "auntie");
 
 //            Hashtable<String, String> hashTable = new Hashtable<String, String>();
@@ -278,9 +292,7 @@ public class GameScreen implements Screen {
 
             coreWar.setScreen(new NetScreen(coreWar, assets));
 //            file.writeString(Base64Coder.encodeString(json.toJson(nodeWarGame)), false);
-
         }
-
     }
 
 

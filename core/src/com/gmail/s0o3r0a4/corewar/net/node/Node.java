@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.ADDR_MODE.DIR;
 import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.ADDR_MODE.IMM;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.ADDR_MODE.IND;
+import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.ADDR_MODE.INDA;
 import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.MODIFIER.AB;
 import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.MODIFIER.F;
 import static com.gmail.s0o3r0a4.corewar.net.node.core.Instruction.MODIFIER.I;
@@ -23,6 +25,7 @@ public class Node extends Core {
     private ArrayList<Port> ports;
     private float startupTime;
     private int maxPorts;
+    private int privateAddr;
 
     private boolean receiving = false;
     private boolean sending = false;
@@ -69,10 +72,12 @@ public class Node extends Core {
 //        core[2] = new Instruction(JMP, AB, DIR, -2, DIR, 0);
 //        core[3] = new Instruction(DAT, F, IMM, 0, IMM, 0);
 
-        core[0] = new Instruction(MOV, I, DIR, 0, DIR, 2);
-        core[1] = new Instruction(MOV, I, DIR, -1, DIR, 2);
-        core[2] = new Instruction(JMP, AB, DIR, 1, DIR, 0);
-        core[3] = new Instruction(DAT, F, IMM, 1, IMM, 1);
+//        core[0] = new Instruction(MOV, I, DIR, 0, DIR, 2);
+//        core[1] = new Instruction(MOV, I, DIR, -1, DIR, 2);
+//        core[2] = new Instruction(JMP, AB, DIR, 1, DIR, 0);
+//        core[3] = new Instruction(DAT, F, IMM, 1, IMM, 1);
+
+        core[0] = new Instruction(MOV, I, INDA, 0, DIR, 1);
 
 //        core[2] = core[10];
 //        core[500] = new Instruction(MOV, I, DIR, 0, DIR, 1);

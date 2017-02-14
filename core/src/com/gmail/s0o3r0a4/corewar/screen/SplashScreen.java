@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.gmail.s0o3r0a4.corewar.CoreWar;
 import com.gmail.s0o3r0a4.corewar.assets.Assets;
+import com.gmail.s0o3r0a4.corewar.net.NodesManager;
 
 public class SplashScreen implements Screen {
     private CoreWar game;
@@ -30,7 +31,7 @@ public class SplashScreen implements Screen {
 
         if (assets.manager.update()) {
 //            game.setScreen(new GameScreen(game, assets, new CoreDebug(8000)));
-            game.setScreen(new NetScreen(game, assets));
+            game.setScreen(new BaseScreen(game, new NodesManager(), assets));
         }
 
         stage.act(delta);

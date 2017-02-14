@@ -2,6 +2,7 @@ package com.gmail.s0o3r0a4.corewar.screen;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -14,10 +15,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -27,9 +30,9 @@ import com.badlogic.gdx.utils.JsonWriter;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.gmail.s0o3r0a4.corewar.CoreWar;
 import com.gmail.s0o3r0a4.corewar.assets.Assets;
-import com.gmail.s0o3r0a4.corewar.net.Net;
 import com.gmail.s0o3r0a4.corewar.net.node.Node;
 import com.gmail.s0o3r0a4.corewar.net.node.NodeAddr;
+import com.gmail.s0o3r0a4.corewar.parser.Redcode;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -53,12 +56,12 @@ public class NetScreen implements Screen {
 
     private TextureRegion FABTextureRegion;
     private TextureRegionDrawable FABTexRegionDrawable;
-    private ImageButton FAButton;
+    private Button FAButton;
 
     private float screenWidth;
     private float screenHeight;
 
-    private Net testNet;
+//    private Net testNet;
     private ArrayList<ImageButton> testButton;
     private float testButtonX[];
     private float testButtonY[];
@@ -109,8 +112,8 @@ public class NetScreen implements Screen {
         blockTexRegionDrawable = new TextureRegionDrawable(blockTextureRegion);
 
         // TODO: Test Net
-        testNet = new Net(screenWidth, screenHeight);
-        testNet.update();
+//        testNet = new Net(screenWidth, screenHeight);
+//        testNet.update();
         // TODO: Add visible true after creating the table
         Table testTable = new Table();
         testTable.setFillParent(true);
@@ -123,7 +126,8 @@ public class NetScreen implements Screen {
 //            testButtonY[i] = (float)testNet.getNodeY(i);
             testButton.add(new ImageButton(blockTexRegionDrawable));
             testButton.get(i).setVisible(false);
-            testTable.add(testButton.get(i)).expand().bottom().left();
+            testButton.get(i).setPosition(i * 50, i * 50);
+            testTable.addActor(testButton.get(i)); // .expand().bottom().left()
         }
 
         // TODO: Default values
@@ -133,7 +137,7 @@ public class NetScreen implements Screen {
             prefs.putBoolean("firstTime", false);
             for (int i = 0; i < nodesSize; i++) {
                 NodeAddr nodeAddr = new NodeAddr(2, i);
-                nodes.add(new Node(8000, nodeAddr));
+                nodes.add(new Node(8000, nodeAddr, 0.0f, 16));
             }
 
             for (int i = 0; i < nodesSize; i++) {
@@ -141,7 +145,7 @@ public class NetScreen implements Screen {
 
                 Json json = new Json(JsonWriter.OutputType.minimal);
 
-//            Base64Coder.encodeString(json.toJson(nodeWarGame));
+//              Base64Coder.encodeString(json.toJson(nodeWarGame));
 
                 hashTable.put(nodes.get(i).getAddr().toString(), Base64Coder.encodeString(json.toJson(nodes.get(i))));
                 prefs.put(hashTable);
@@ -185,7 +189,7 @@ public class NetScreen implements Screen {
                                     int pointer, int button) {
                     changingNode = false;
                     if (dragged) {
-                        testNet.initialize();
+//                        testNet.initialize();
                         dragged = false;
                     } else {
 //                        coreWar.setScreen(new GameScreen(coreWar, assets, new CoreDebug(8000)));
@@ -194,7 +198,6 @@ public class NetScreen implements Screen {
 //                        Base64Coder.decodeString(prefs.getString(nodes.get(index).getAddr().toString(), );
 
                         Gdx.app.debug("Open node:", Integer.toString(index));
-                        Gdx.app.debug("Open IP:", nodes.get(index).getAddr().toString());
                         Gdx.app.debug("Open IP:", nodes.get(index).getAddr().toString());
                         Node node = json.fromJson(Node.class, Base64Coder.decodeString(prefs.getString(nodes.get(index).getAddr().toString())));
                         coreWar.setScreen(new GameScreen(coreWar, assets, node));
@@ -212,9 +215,6 @@ public class NetScreen implements Screen {
 //                    testButtonY[index] = y - testButton.get(index).getHeight() / 2/* + testButtonY[index]*/;
 //                    testButton.get(index).setPosition(testButtonX[index], testButtonY[index]);
 //                    testNet.setLocation(index, testButton.get(index).getX(), testButton.get(index).getY());
-
-                    Gdx.app.debug(Float.toString(testButtonX[index]), "!");
-                    Gdx.app.debug(Float.toString(testButtonY[index]), "?");
                 }
             });
         }
@@ -228,8 +228,18 @@ public class NetScreen implements Screen {
         // README: Add a Floating Action Button
         FABTextureRegion = new TextureRegion(blockTexture);
         FABTexRegionDrawable = new TextureRegionDrawable(FABTextureRegion);
-        FAButton = new ImageButton(blockTexRegionDrawable);
+//        FAButton = new ImageButton(blockTexRegionDrawable);
+        FAButton = new Button();
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = skin.getFont("default-font");
+        textButtonStyle.up = FABTexRegionDrawable;
+        textButtonStyle.down = FABTexRegionDrawable;
+        textButtonStyle.checked = FABTexRegionDrawable;
+
+        FAButton.setStyle(textButtonStyle);
+        FAButton.setBackground(FABTexRegionDrawable);
         FAButton.bottom().right();
+//        FAButton.getImage().setFillParent(true);
         FAButton.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 Gdx.app.debug("fucked up", "oh shit");
@@ -239,7 +249,8 @@ public class NetScreen implements Screen {
         // README: Add the FAButton to the FABContainer
         Table FABContainer = new Table();
         FABContainer.setFillParent(true);
-        FABContainer.add(FAButton).expand().bottom().right().pad(20); // TODO: BUG cleared
+        FABContainer.add(FAButton).size((int) (screenWidth * 0.1), (int) (screenWidth * 0.1))
+                .expand().bottom().right().pad((int) (screenWidth * 0.05)); // TODO: BUG cleared
 
         // README: Stack up the content and FAB
         Stack stack = new Stack();
@@ -268,6 +279,8 @@ public class NetScreen implements Screen {
         Gdx.app.debug("Stage height", Float.toString(stage.getHeight()));
 //        Gdx.app.debug(Float.toString((float)testNet.x), Float.toString((float)testNet.y));
 //        Gdx.app.debug(Float.toString((float)testNet.eneX), Float.toString((float)testNet.eneY));
+
+        Redcode.parse("data/init/tutorial_server_1.red");
     }
 
     @Override
@@ -319,21 +332,13 @@ public class NetScreen implements Screen {
         stage.act();
         stage.draw();
 
-        // TODO: Test Net
-        for (int i = 0; i < testButton.size(); i++) {
-            if (!changingNode) {
-                testNet.update();
-//                testButton.get(i).setPosition((float)testNet.getNodeX(i), (float)testNet.getNodeY(i));
-//                testButton.get(i).setPosition(testButtonX[i], testButtonY[i]);
-            }
-        }
-
         // README: Get input
-//        if ((Gdx.input.isKeyPressed(Input.Keys.BACK)))
-//        {
-//            Gdx.app.debug("hi", "auntie");
+        if ((Gdx.input.isKeyJustPressed(Input.Keys.BACK)) || Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+        {
+            Gdx.app.debug("hi", "auntie");
+            Gdx.app.exit();
 //            coreWar.setScreen(new MainMenuScreen(coreWar, assets));
-//        }
+        }
 
     }
 
@@ -361,20 +366,18 @@ public class NetScreen implements Screen {
 
     @Override
     public void hide() {
-        prefs = Gdx.app.getPreferences("save_0");
-
-        for (int i = 0; i < nodesSize; i++) {
-            Hashtable<String, String> hashTable = new Hashtable<String, String>();
-
-            Json json = new Json(JsonWriter.OutputType.minimal);
-
-//            Base64Coder.encodeString(json.toJson(nodeWarGame));
-
-            hashTable.put(nodes.get(i).getAddr().toString(), Base64Coder.encodeString(json.toJson(nodes.get(i))));
-            prefs.put(hashTable);
-        }
-
-        prefs.flush();
+//        prefs = Gdx.app.getPreferences("save_0");
+//
+//        for (int i = 0; i < nodesSize; i++) {
+//            Hashtable<String, String> hashTable = new Hashtable<String, String>();
+//
+//            Json json = new Json(JsonWriter.OutputType.minimal);
+//
+//            hashTable.put(nodes.get(i).getAddr().toString(), Base64Coder.encodeString(json.toJson(nodes.get(i))));
+//            prefs.put(hashTable);
+//        }
+//
+//        prefs.flush();
     }
 
     @Override
